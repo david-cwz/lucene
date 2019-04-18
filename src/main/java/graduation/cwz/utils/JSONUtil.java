@@ -1,56 +1,40 @@
 package graduation.cwz.utils;
 
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+
 /**
- *
- * @Description: 基于fastjson封装的json转换工具类
- * @author lgs
- * @date 2018年5月30日
+ * Json工具类
  *
  */
 public class JSONUtil {
-
-
     /**
-     * 功能描述：把JSON数据转换成指定的java对象
-     * @param jsonData JSON数据
-     * @param clazz 指定的java对象
-     * @return 指定的java对象
+     * 字符串转换为实体类
+     *
      */
-    public static <T> T getJsonToBean(String jsonData, Class<T> clazz) {
-        return JSON.parseObject(jsonData, clazz);
+    public static <T> T StringToEntity(String str, Class<T> classT) {
+        T t = JSON.parseObject(str, classT);
+        return t;
     }
 
     /**
-     * 功能描述：把java对象转换成JSON数据
-     * @param object java对象
-     * @return JSON数据
+     * 字符串转换为实体集合
+     *
      */
-    public static String getBeanToJson(Object object) {
-        return JSON.toJSONString(object);
+    public static <T> ArrayList<T> StringToEntityList(String str, Class<T> classT) {
+        List<T> lst = JSON.parseArray(str, classT);
+        return (ArrayList<T>) lst;
     }
 
     /**
-     * 功能描述：把JSON数据转换成指定的java对象列表
-     * @param jsonData JSON数据
-     * @param clazz 指定的java对象
-     * @return List<T>
+     * 实体类转换为字符串
+     *
      */
-    public static <T> List<T> getJsonToList(String jsonData, Class<T> clazz) {
-        return JSON.parseArray(jsonData, clazz);
+    public static <T> String EntityToString(T data) {
+        String str = JSON.toJSONString(data);
+        return str;
     }
-
-    /**
-     * 功能描述：把JSON数据转换成较为复杂的List<Map<String, Object>>
-     * @param jsonData JSON数据
-     * @return List<Map<String, Object>>
-     */
-    public static List<Map<String, Object>> getJsonToListMap(String jsonData) {
-        return JSON.parseObject(jsonData, new TypeReference<List<Map<String, Object>>>() {
-        });
-    }
-
 }

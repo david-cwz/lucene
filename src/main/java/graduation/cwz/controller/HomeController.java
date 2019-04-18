@@ -32,7 +32,7 @@ public class HomeController {
     @RequestMapping(value = "/register", method = POST)
     @ResponseBody
     public String register(@RequestBody RegisterData registerData) {
-        return JSONUtil.getBeanToJson(registerData);
+        return JSONUtil.EntityToString(registerData);
     }
 
 }
