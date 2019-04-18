@@ -3,7 +3,7 @@ package graduation.cwz.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import graduation.cwz.model.RegisterData;
-import graduation.cwz.utils.JsonUtil;
+import graduation.cwz.utils.JSONUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class HomeController {
     @RequestMapping(value = "/register", method = POST)
     @ResponseBody
     public String register(@RequestBody RegisterData registerData) {
-        return JsonUtil.getJsonStr(registerData);
+        return JSONUtil.getBeanToJson(registerData);
     }
 
 }
