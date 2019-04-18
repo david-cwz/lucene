@@ -95,7 +95,7 @@
     <div id="registerForm">
         <div><label for="userName_r">用户名：</label><input type="text" id="userName_r"></div>
         <div><label for="userPassword_r">密码：&nbsp;</label><input type="password" id="userPassword_r"></div>
-        <div><label for="userPassword_r">密码确认：&nbsp;</label><input type="password"></div>
+        <div><label>密码确认：&nbsp;</label><input type="password" id = "repeatPassword"></div>
         <div><input type="button" id="register" value="注册" onclick="register()"></div>
         <span id="close_r" onclick="hideRegister()">x</span>
     </div>
@@ -107,6 +107,9 @@
     <p>·基于Lucene的检索引擎</p>
     <p>·提交搜索信息，在网站中检索匹配的信息并展示</p>
     <p>·在未来有人提交了匹配信息时，可以收到邮件反馈</p>
+</div>
+<div id = "output">
+0.0
 </div>
 </body>
 </html>

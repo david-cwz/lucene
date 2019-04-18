@@ -17,7 +17,14 @@
     <mvc:default-servlet-handler />
 
     <!-- 启用annotation -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value="text/html;charset=utf-8"></property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
     <mvc:resources location="/WEB-INF/views/img/" mapping="/img/**"/>
     <mvc:resources location="/WEB-INF/views/js/" mapping="/js/**"/>
     <mvc:resources location="/WEB-INF/views/css/" mapping="/css/**"/>
