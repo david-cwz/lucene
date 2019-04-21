@@ -5,5 +5,8 @@ import graduation.cwz.entity.User;
 import java.util.List;
 
 public interface UserService {
-    public List<User> getUser();
+    List<User> getUserList();
+    void addUser(String username, String password);
+    void deleteUser(String username);
+    void changePassword(String username, String newPassword);
 }

@@ -1,73 +1,68 @@
 package graduation.cwz.dao.impl;
 
-import graduation.cwz.dao.UserDao;
+import graduation.cwz.dao.SearchHistoryDao;
+import graduation.cwz.entity.SearchHistory;
 import graduation.cwz.entity.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
-@Repository
-public class UserDaoImpl implements UserDao {
+public class SearchHistoryDaoImpl implements SearchHistoryDao {
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
-    public List<User> getUserList() {
-        List<User> list = null;
+    public List<SearchHistory> getRecordList() {
+        List<SearchHistory> list = null;
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from User");
+            Query query = session.createQuery("from SearchHistory");
             list = query.list();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
         return list;
     }
 
     @Override
-    public void addUser(String username, String password) {
+    public List<SearchHistory> getRecordListByUser(String username) {
+        List<SearchHistory> list = null;
         try (Session session = sessionFactory.openSession()) {
-            User user = new User(username, password);
+            Query query = session.createQuery("from SearchHistory sh " +
+                    "where sh.user.username=:username");
+            query.setParameter("username", username);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public void addRecord(String record, String username) {
+        try (Session session = sessionFactory.openSession()) {
+            SearchHistory searchHistory = new SearchHistory(record, new User(username));
             Transaction transaction = session.beginTransaction();
-            session.save(user);
+            session.save(searchHistory);
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     @Override
-    public void delUser(String username) {
+    public void delRecord(int id) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("delete from User u " +
-                    "where u.username=:username");
-            query.setParameter("username", username);
-            query.executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    @Override
-    public void changePassword(String username, String newPassword) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update User u set u.password=:newPassword " +
-                    "where u.username=:username");
-            query.setParameter("newPassword", newPassword);
-            query.setParameter("username", username);
+            Query query = session.createQuery("delete from SearchHistory sh " +
+                    "where sh.id=:id");
+            query.setParameter("id", id);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

@@ -1,57 +1,56 @@
 package graduation.cwz.dao.impl;
 
-import graduation.cwz.dao.UserDao;
-import graduation.cwz.entity.User;
+import graduation.cwz.dao.ConfigurationDao;
+import graduation.cwz.entity.Configuration;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
-@Repository
-public class UserDaoImpl implements UserDao {
+public class ConfigurationDaoImpl implements ConfigurationDao {
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
-    public List<User> getUserList() {
-        List<User> list = null;
+    public String getCurrentUser() {
+        List<Configuration> list = null;
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from User");
+            Query query = session.createQuery("from Configuration c ");
             list = query.list();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-
-        return list;
-    }
-
-    @Override
-    public void addUser(String username, String password) {
-        try (Session session = sessionFactory.openSession()) {
-            User user = new User(username, password);
-            Transaction transaction = session.beginTransaction();
-            session.save(user);
-            transaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        if (list == null) {
+            return null;
+        } else {
+            return list.get(0).getCurrentUser();
         }
 
     }
 
     @Override
-    public void delUser(String username) {
+    public void addConfig(String username) {
+        try (Session session = sessionFactory.openSession()) {
+            Configuration configuration = new Configuration(username);
+            Transaction transaction = session.beginTransaction();
+            session.save(configuration);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateConfig(String newUsername) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("delete from User u " +
-                    "where u.username=:username");
-            query.setParameter("username", username);
+            Query query = session.createQuery("update Configuration c set c.currentUser=:newUsername ");
+            query.setParameter("newUsername", newUsername);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
@@ -61,13 +60,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void changePassword(String username, String newPassword) {
+    public void clear() {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update User u set u.password=:newPassword " +
-                    "where u.username=:username");
-            query.setParameter("newPassword", newPassword);
-            query.setParameter("username", username);
+            Query query = session.createQuery("delete from Configuration");
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

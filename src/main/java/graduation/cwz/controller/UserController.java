@@ -22,7 +22,7 @@ public class UserController {
     public String getUser(HttpServletRequest request, HttpServletResponse response, Model model){
         try {
             List<User> list;
-            list = userService.getUser();
+            list = userService.getUserList();
             model.addAttribute("lists", list);
         } catch (Exception e) {
             e.printStackTrace();
