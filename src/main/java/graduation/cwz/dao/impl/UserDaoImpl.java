@@ -46,12 +46,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void delUser(String username) {
+    public void delUser(String deleteName) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query query = session.createQuery("delete from User u " +
-                    "where u.username=:username");
-            query.setParameter("username", username);
+                    "where u.username=:deleteName");
+            query.setParameter("deleteName", deleteName);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

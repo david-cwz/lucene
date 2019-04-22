@@ -8,5 +8,5 @@ public interface SearchHistoryDao {
     List<SearchHistory> getRecordList();
     List<SearchHistory> getRecordListByUser(String username);
     void addRecord(String record, String username);
-    void delRecord(int id);
+    void delRecord(int deleteId);
 }

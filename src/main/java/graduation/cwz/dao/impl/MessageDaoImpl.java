@@ -43,12 +43,12 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public void delMessage(int id) {
+    public void delMessage(int deleteId) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query query = session.createQuery("delete from Message m " +
-                    "where m.id=:id");
-            query.setParameter("id", id);
+                    "where m.id=:deleteId");
+            query.setParameter("deleteId", deleteId);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

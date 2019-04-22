@@ -7,9 +7,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class ConfigurationDaoImpl implements ConfigurationDao {
     @Autowired
     private SessionFactory sessionFactory;
@@ -46,7 +48,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     }
 
     @Override
-    public void updateConfig(String newUsername) {
+    public void updateCurrentUser(String newUsername) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query query = session.createQuery("update Configuration c set c.currentUser=:newUsername ");

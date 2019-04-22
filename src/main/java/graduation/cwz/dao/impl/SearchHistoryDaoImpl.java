@@ -8,9 +8,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class SearchHistoryDaoImpl implements SearchHistoryDao {
     @Autowired
     private SessionFactory sessionFactory;
@@ -57,12 +59,12 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
-    public void delRecord(int id) {
+    public void delRecord(int deleteId) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query query = session.createQuery("delete from SearchHistory sh " +
-                    "where sh.id=:id");
-            query.setParameter("id", id);
+                    "where sh.id=:deleteId");
+            query.setParameter("deleteId", deleteId);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

@@ -7,6 +7,6 @@ import java.util.List;
 public interface UserDao {
     List<User> getUserList();
     void addUser(String username, String password);
-    void delUser(String username);
+    void delUser(String deleteName);
     void changePassword(String username, String newPassword);
 }
