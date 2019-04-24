@@ -6,10 +6,7 @@ import graduation.cwz.service.MessageService;
 import graduation.cwz.utils.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,5 +51,18 @@ public class MessageController {
             return "fail";
         }
         return "success";
+    }
+
+    @RequestMapping(value="/search",method= RequestMethod.GET)
+    @ResponseBody
+    public String searchRecord(@RequestParam(value = "keyWord") String keyWord){
+        String result;
+        try {
+            result = messageService.search(keyWord);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        }
+        return result;
     }
 }

@@ -18,8 +18,8 @@ public class Message {
     private String content;
 
     public Message() {}
-    public Message(String type, String content) {
-        this.intro = type;
+    public Message(String intro, String content) {
+        this.intro = intro;
         this.content = content;
     }
 
@@ -31,12 +31,12 @@ public class Message {
         this.id = id;
     }
 
-    public String getType() {
+    public String getIntro() {
         return intro;
     }
 
-    public void setType(String type) {
-        this.intro = type;
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public String getContent() {
