@@ -2,7 +2,9 @@ package graduation.cwz.service.impl;
 
 import graduation.cwz.dao.MessageDao;
 import graduation.cwz.entity.Message;
+import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
+import graduation.cwz.utils.JSONUtil;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.FileSystems;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +33,7 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     MessageDao messageDao;
 
-    private static final String INDEX_PATH = "\\graduation\\cwz\\index";
+    private static final String INDEX_PATH = "C:lucene\\index"; //lucene索引存放的本地位置
 
 
     @Override
@@ -65,7 +68,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public String search(String keyWord) {
-        return null;
+        creatIndex();
+        List<SearchResultData> resultList = searchLucene(keyWord);
+        return JSONUtil.listToJson(resultList);
     }
 
     /**
@@ -112,8 +117,8 @@ public class MessageServiceImpl implements MessageService {
     /**
      * 搜索
      */
-    public void searchLucene(String keyWord)
-    {
+    public List<SearchResultData> searchLucene(String keyWord) {
+        List<SearchResultData> resultList = new ArrayList<>();
         DirectoryReader directoryReader = null;
         try
         {
@@ -151,34 +156,38 @@ public class MessageServiceImpl implements MessageService {
             {
                 // 7、根据searcher和ScoreDoc对象获取具体的Document对象
                 Document document = indexSearcher.doc(scoreDoc.doc);
+                String id = document.get("id");
+                String intro = document.get("intro");
                 String content = document.get("content");
+                String _intro = highlighter.getBestFragment(analyzer, "intro", intro);
+                String _content = highlighter.getBestFragment(analyzer, "content", content);
+                SearchResultData result = new SearchResultData(Integer.valueOf(id), _intro, _content);
+                resultList.add(result);
                 //TokenStream tokenStream = new SimpleAnalyzer().tokenStream("content", new StringReader(content));
                 //TokenSources.getTokenStream("content", tvFields, content, analyzer, 100);
                 //TokenStream tokenStream = TokenSources.getAnyTokenStream(indexSearcher.getIndexReader(), scoreDoc.doc, "content", document, analyzer);
                 //System.out.println(highlighter.getBestFragment(tokenStream, content));
                 System.out.println("-----------------------------------------");
-                System.out.println("文章标题："+document.get("title"));
-                System.out.println("文章地址：" + document.get("url"));
-                System.out.println("文章内容：");
-                System.out.println(highlighter.getBestFragment(analyzer, "content", content));
+                System.out.println("文章id：" + id);
+                System.out.println("文章intro：");
+                System.out.println(_intro);
+                System.out.println("文章content：");
+                System.out.println(_content);
                 System.out.println("");
                 // 8、根据Document对象获取需要的值
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 if(directoryReader != null) directoryReader.close();
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
+        return resultList;
     }
+
 }
