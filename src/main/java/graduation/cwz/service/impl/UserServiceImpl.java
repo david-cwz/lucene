@@ -25,10 +25,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(UserData userData) throws Exception {
         try {
-            if (userData == null || userData.getPassword() == null || userData.getUsername() == null) {
+            if (userData == null || userData.getPassword() == null || userData.getUserName() == null) {
                 throw new Exception("注册信息缺失");
             }
-            String username = userData.getUsername();
+            String username = userData.getUserName();
             String password = userData.getPassword();
             userDao.addUser(username, password);
         } catch (Exception e) {
@@ -58,19 +58,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(UserData userData) throws Exception {
+    public String login(UserData userData) {
         try {
-            if (userData == null || userData.getPassword() == null || userData.getUsername() == null) {
-                throw new Exception("登陆信息缺失");
+            if (userData == null || userData.getPassword() == null || userData.getUserName() == null) {
+                return "登陆信息缺失";
             }
-            String username = userData.getUsername();
+            String username = userData.getUserName();
             String password = userData.getPassword();
             List<User> list = userDao.getUserList();
             for (User user : list) {
                 if (user.getUername().equals(username)) {
                     if (user.getPassword().equals(password)) {
                         configurationService.updateCurrentUser(username);
-                        return "success";
+                        return "";
                     } else {
                         return "wrong password";
                     }

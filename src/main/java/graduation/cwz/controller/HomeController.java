@@ -11,7 +11,7 @@ public class HomeController {
 
     @RequestMapping(method = GET)
     public String home() {
-        return "index";
+        return "main";
     }
 
     @RequestMapping(value = "/result", method = GET)

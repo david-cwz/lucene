@@ -4,6 +4,8 @@ import graduation.cwz.entity.User;
 import graduation.cwz.model.UserData;
 import graduation.cwz.service.UserService;
 import graduation.cwz.utils.JSONUtil;
+import graduation.cwz.utils.MD5Util;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -22,15 +26,23 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(value="/login",method= RequestMethod.POST)
-    @ResponseBody
-    public String login(@RequestBody UserData userData){
+    public String login(UserData userData, HttpServletRequest request){
+
         String message = "";
         try {
             message = userService.login(userData);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return message;
+        if (!"".equals(message)) {
+            request.setAttribute("errorMsg", "请认真核对账号、密码！ message：" + message);
+            return "login";
+        } else {
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", userData.getUserName());
+            return "redirect:/main.jsp";
+        }
+
     }
 
     @RequestMapping(value = "/register", method = POST)
@@ -73,7 +85,7 @@ public class UserController {
     @ResponseBody
     public String changePassword(@RequestBody UserData userData){
         try {
-            userService.changePassword(userData.getUsername(), userData.getNewPassword());
+            userService.changePassword(userData.getUserName(), userData.getNewPassword());
         } catch (Exception e) {
             e.printStackTrace();
             return "fail";

@@ -1,17 +1,17 @@
 package graduation.cwz.model;
 
 public class UserData {
-    private String username;
+    private String userName;
     private String password;
     private String deleteName;
     private String newPassword;
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {
