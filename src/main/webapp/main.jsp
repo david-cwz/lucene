@@ -39,7 +39,7 @@
 
         function openPasswordModifyDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "修改密码");
-            url = "${pageContext.request.contextPath}/user/modifyPassword.do?id=${currentUser.id}";
+            url = "${pageContext.request.contextPath}/user/modifyPassword.do?userName=${currentUser}";
         }
 
         function closePasswordModifyDialog() {
@@ -97,8 +97,7 @@
             <td width="50%"></td>
             <td valign="bottom"
                 style="font-size: 20px;color:#8B8B8B;font-family: '楷体';"
-                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前管理员：</strong>${currentUser.userName
-                    }</font>【管理员】
+                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser}</font>
             </td>
         </tr>
     </table>
@@ -134,10 +133,10 @@
         </div>
         <div title="系统管理" data-options="iconCls:'icon-item'"
              style="padding:10px;border:none;">
-            <a href="javascript:openTab(' 管理员列表','userManage.jsp','icon-lxr')"
+            <a href="javascript:openTab('用户列表','userManage.jsp','icon-lxr')"
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-lxr'" style="width: 150px;">
-                管理员列表</a> <a href="javascript:openPasswordModifyDialog()"
+                用户列表</a> <a href="javascript:openPasswordModifyDialog()"
                              class="easyui-linkbutton"
                              data-options="plain:true,iconCls:'icon-modifyPassword'"
                              style="width: 150px;"> 修改密码</a> <a href="javascript:logout()"
@@ -156,7 +155,7 @@
             <tr>
                 <td>用户名：</td>
                 <td><input type="text" id="userName" name="userName"
-                           value="${currentUser.userName }" readonly="readonly"
+                           value="${currentUser}" readonly="readonly"
                            style="width: 200px"/>
                 </td>
             </tr>

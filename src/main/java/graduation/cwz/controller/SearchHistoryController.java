@@ -16,7 +16,7 @@ public class SearchHistoryController {
     @Autowired
     private SearchHistoryService searchHistoryService;
 
-    @RequestMapping(value="/list",method= RequestMethod.GET)
+    @RequestMapping(value="/list")
     @ResponseBody
     public String getRecordList(){
         List<SearchHistory> list = null;
@@ -28,7 +28,7 @@ public class SearchHistoryController {
         return JSONUtil.listToJson(list);
     }
 
-    @RequestMapping(value="/list/{username}",method= RequestMethod.GET)
+    @RequestMapping(value="/list/{username}")
     @ResponseBody
     public String getRecordListByUser(@PathVariable(value = "username") String username){
         List<SearchHistory> list = null;
@@ -40,7 +40,7 @@ public class SearchHistoryController {
         return JSONUtil.listToJson(list);
     }
 
-    @RequestMapping(value="/add",method= RequestMethod.POST)
+    @RequestMapping(value="/add")
     @ResponseBody
     public String addRecord(@RequestBody RecordData recordData){
         try {
@@ -52,7 +52,7 @@ public class SearchHistoryController {
         return "success";
     }
 
-    @RequestMapping(value="/delete",method= RequestMethod.POST)
+    @RequestMapping(value="/delete")
     @ResponseBody
     public String deleteRecord(@RequestBody RecordData recordData){
         try {

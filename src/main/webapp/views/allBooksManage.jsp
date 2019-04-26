@@ -105,7 +105,7 @@
     }
 
     function formatProPic(val, row) {
-        return "<img width=80 height=110 src='../" + val + "'>";
+        return "<img width=80 height=110 src=" + val + "'../WEB-INF'>";
     }
     function formatStatus(val, row) {
         if (row.status == 1)

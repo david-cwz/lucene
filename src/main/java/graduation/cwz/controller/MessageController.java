@@ -16,7 +16,7 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping(value="/list",method= RequestMethod.GET)
+    @RequestMapping(value="/list")
     @ResponseBody
     public String getMessageList(){
         List<Message> list = null;
@@ -29,7 +29,7 @@ public class MessageController {
     }
 
 
-    @RequestMapping(value="/add",method= RequestMethod.POST)
+    @RequestMapping(value="/add")
     @ResponseBody
     public String addRecord(@RequestBody MessageData messageData){
         try {
@@ -41,7 +41,7 @@ public class MessageController {
         return "success";
     }
 
-    @RequestMapping(value="/delete",method= RequestMethod.POST)
+    @RequestMapping(value="/delete")
     @ResponseBody
     public String deleteRecord(@RequestBody MessageData messageData){
         try {
@@ -53,7 +53,7 @@ public class MessageController {
         return "success";
     }
 
-    @RequestMapping(value="/search",method= RequestMethod.GET)
+    @RequestMapping(value="/search")
     @ResponseBody
     public String searchRecord(@RequestParam(value = "keyWord") String keyWord){
         String result;

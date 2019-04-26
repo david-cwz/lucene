@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value="/login",method= RequestMethod.POST)
+    @RequestMapping(value="/login")
     public String login(UserData userData, HttpServletRequest request){
 
         String message = "";
@@ -45,7 +45,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/register", method = POST)
+    @RequestMapping(value = "/register")
     @ResponseBody
     public String register(@RequestBody UserData userData) {
         try {
@@ -57,7 +57,7 @@ public class UserController {
         return "success";
     }
 
-    @RequestMapping(value="/list",method= RequestMethod.GET)
+    @RequestMapping(value="/list")
     @ResponseBody
     public String userList(){
         List<User> list = null;
@@ -69,7 +69,7 @@ public class UserController {
         return JSONUtil.listToJson(list);
     }
 
-    @RequestMapping(value="/delete",method= RequestMethod.POST)
+    @RequestMapping(value="/delete")
     @ResponseBody
     public String deleteUser(@RequestBody UserData userData){
         try {
@@ -81,7 +81,7 @@ public class UserController {
         return "success";
     }
 
-    @RequestMapping(value="/changePassword",method= RequestMethod.POST)
+    @RequestMapping(value="/modifyPassword")
     @ResponseBody
     public String changePassword(@RequestBody UserData userData){
         try {

@@ -13,7 +13,7 @@ public class ConfigurationController {
     @Autowired
     private ConfigurationService configurationService;
 
-    @RequestMapping(value="/currentUser",method= RequestMethod.GET)
+    @RequestMapping(value="/currentUser")
     @ResponseBody
     public String getMCurrentUser(){
         String currentUsername = "";
