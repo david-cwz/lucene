@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Repository
@@ -18,7 +19,25 @@ public class UserDaoImpl implements UserDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<User> getUserList() {
+    public List<User> getUserList(Map<String, Object> map) {
+        List<User> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from User");
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<User> getAllUserList() {
         List<User> list = null;
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from User");
@@ -50,7 +69,7 @@ public class UserDaoImpl implements UserDao {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Query query = session.createQuery("delete from User u " +
-                    "where u.username=:deleteName");
+                    "where u.userName=:deleteName");
             query.setParameter("deleteName", deleteName);
             query.executeUpdate();
             transaction.commit();
@@ -61,13 +80,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void changePassword(String username, String newPassword) {
+    public void modifyInfo(String userName, String password, String oldName) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update User u set u.password=:newPassword " +
-                    "where u.username=:username");
-            query.setParameter("newPassword", newPassword);
-            query.setParameter("username", username);
+            Query query = session.createQuery("update User u set u.userName=:userName, u.password=:password " +
+                    "where u.userName=:oldName");
+            query.setParameter("userName", userName);
+            query.setParameter("password", password);
+            query.setParameter("oldName", oldName);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

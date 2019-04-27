@@ -30,16 +30,16 @@
                 $.messager.alert("系统提示", "请选择要删除的数据！");
                 return;
             }
-            var strIds = [];
+            var strNameList = [];
             for (var i = 0; i < selectedRows.length; i++) {
-                strIds.push(selectedRows[i].id);
+                strNameList.push(selectedRows[i].userName);
             }
-            var ids = strIds.join(",");
+            var nameList = strNameList.join(",");
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
                     + selectedRows.length + "</font>条数据吗？", function (r) {
                 if (r) {
                     $.post("${pageContext.request.contextPath}/user/delete.do", {
-                        ids: ids
+                        nameList: nameList
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "数据已成功删除！");
@@ -55,7 +55,7 @@
 
         function openUserAddDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
-            url = "${pageContext.request.contextPath}/user/save.do";
+            url = "${pageContext.request.contextPath}/user/register.do";
         }
 
         function saveUser() {
@@ -82,8 +82,8 @@
             var row = selectedRows[0];
             $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
             $('#fm').form('load', row);
-            $("#password").val("******");
-            url = "${pageContext.request.contextPath}/user/save.do?id=" + row.id;
+            // $("#password").val("******");
+            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=" + row.userName;
         }
 
         function resetValue() {
@@ -105,8 +105,9 @@
     <thead>
     <tr>
         <th field="cb" checkbox="true" align="center"></th>
-        <th field="id" width="50" align="center">编号</th>
         <th field="userName" width="100" align="center">用户名</th>
+        <th field="password" width="100" align="center">密码</th>
+
     </tr>
     </thead>
 </table>

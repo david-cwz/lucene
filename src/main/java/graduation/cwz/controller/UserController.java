@@ -1,21 +1,26 @@
 package graduation.cwz.controller;
 
 import graduation.cwz.entity.User;
+import graduation.cwz.model.PageBean;
 import graduation.cwz.model.UserData;
 import graduation.cwz.service.UserService;
 import graduation.cwz.utils.JSONUtil;
 import graduation.cwz.utils.MD5Util;
+import graduation.cwz.utils.ResponseUtil;
+import graduation.cwz.utils.StringUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -45,52 +50,87 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/register")
-    @ResponseBody
-    public String register(@RequestBody UserData userData) {
+    /**
+     * 退出系统
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login.jsp";
+    }
+
+    /**
+     * 添加用户
+     *
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/register")
+    public String save(UserData userData, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
         try {
             userService.register(userData);
+            result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            result.put("success", false);
         }
-        return "success";
+        ResponseUtil.write(response, result);
+        return null;
     }
 
-    @RequestMapping(value="/list")
-    @ResponseBody
-    public String userList(){
-        List<User> list = null;
+    @RequestMapping(value="/modifyInfo")
+    public String modifyInfo(UserData userData, HttpServletResponse response)throws Exception{
+        JSONObject result = new JSONObject();
         try {
-            list = userService.getUserList();
+            userService.modifyInfo(userData);
+            result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
+            result.put("success", false);
         }
-        return JSONUtil.listToJson(list);
+        ResponseUtil.write(response, result);
+        return null;
     }
 
-    @RequestMapping(value="/delete")
-    @ResponseBody
-    public String deleteUser(@RequestBody UserData userData){
-        try {
-            userService.delUser(userData.getDeleteName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
-        }
-        return "success";
+    @RequestMapping("/list")
+    public String userList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, HttpServletResponse response) throws Exception {
+        PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
+        Map<String, Object> map = new HashMap<>();
+        map.put("start", pageBean.getStart());
+        map.put("size", pageBean.getPageSize());
+        List<User> userList = userService.getUserList(map);
+        int total = userList.size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(userList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
     }
 
-    @RequestMapping(value="/modifyPassword")
-    @ResponseBody
-    public String changePassword(@RequestBody UserData userData){
+    /**
+     * 删除用户
+     */
+    @RequestMapping("/delete")
+    public String delete(@RequestParam(value = "nameList") String nameList, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
         try {
-            userService.changePassword(userData.getUserName(), userData.getNewPassword());
+            String[] nameListStr = nameList.split(",");
+            for (int i = 0; i < nameListStr.length; i++) {
+                userService.delUser(nameListStr[i]);
+            }
+            result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            result.put("success", false);
         }
-        return "success";
+        ResponseUtil.write(response, result);
+        return null;
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,8 +19,12 @@ public class UserServiceImpl implements UserService {
     private ConfigurationService configurationService;
 
     @Override
-    public List<User> getUserList() {
-        return userDao.getUserList();
+    public List<User> getUserList(Map<String, Object> map) {
+        return userDao.getUserList(map);
+    }
+
+    public List<User> getAllUserList() {
+        return userDao.getAllUserList();
     }
 
     @Override
@@ -48,9 +53,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(String username, String newPassword){
+    public void modifyInfo(UserData userData){
         try {
-            userDao.changePassword(username, newPassword);
+            userDao.modifyInfo(userData.getUserName(), userData.getPassword(), userData.getOldName());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -65,9 +70,9 @@ public class UserServiceImpl implements UserService {
             }
             String username = userData.getUserName();
             String password = userData.getPassword();
-            List<User> list = userDao.getUserList();
+            List<User> list = userDao.getAllUserList();
             for (User user : list) {
-                if (user.getUername().equals(username)) {
+                if (user.getUserName().equals(username)) {
                     if (user.getPassword().equals(password)) {
                         configurationService.updateCurrentUser(username);
                         return "";

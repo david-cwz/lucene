@@ -4,7 +4,7 @@ public class UserData {
     private String userName;
     private String password;
     private String deleteName;
-    private String newPassword;
+    private String oldName;
 
     public String getUserName() {
         return userName;
@@ -30,12 +30,11 @@ public class UserData {
         this.deleteName = deleteName;
     }
 
-    public String getNewPassword() {
-        return newPassword;
+    public String getOldName() {
+        return oldName;
     }
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void setOldName(String oldName) {
+        this.oldName = oldName;
     }
-
 }
