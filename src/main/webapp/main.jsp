@@ -39,7 +39,7 @@
 
         function openPasswordModifyDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "修改密码");
-            url = "${pageContext.request.contextPath}/user/modifyPassword.do?userName=${currentUser}";
+            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=${currentUser.userName}";
         }
 
         function closePasswordModifyDialog() {
@@ -53,12 +53,17 @@
             $("#fm").form("submit", {
                 url: url,
                 onSubmit: function () {
+                    var oldPassword = $("#oldPassword").val();
                     var newPassword = $("#newPassword").val();
                     var newPassword2 = $("#newPassword2").val();
                     if (!$(this).form("validate")) {
                         return false;
                     }
-                    if (newPassword != newPassword2) {
+                    if (oldPassword !== "${currentUser.password}") {
+                        $.messager.alert("系统提示", "原密码输入错误！");
+                        return false;
+                    }
+                    if (newPassword !== newPassword2) {
                         $.messager.alert("系统提示", "确认密码输入错误！");
                         return false;
                     }
@@ -67,7 +72,7 @@
                 success: function (result) {
                     var result = eval('(' + result + ')');
                     if (result.success) {
-                        $.messager.alert("系统提示", "密码修改成功，下一次登录生效！");
+                        $.messager.alert("系统提示", "密码修改成功！");
                         closePasswordModifyDialog();
                     } else {
                         $.messager.alert("系统提示", "密码修改失败");
@@ -97,7 +102,7 @@
             <td width="50%"></td>
             <td valign="bottom"
                 style="font-size: 20px;color:#8B8B8B;font-family: '楷体';"
-                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser}</font>
+                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser.userName}</font>
             </td>
         </tr>
     </table>
@@ -115,21 +120,21 @@
      split="true">
     <div class="easyui-accordion">
 
-        <div title="书架管理" data-options="iconCls:'icon-shujias'"
+        <div title="搜索管理" data-options="iconCls:'icon-shujias'"
              style="padding:10px">
             <a
-                    href="javascript:openTab(' 书架管理','storeManage.jsp','icon-shujia')"
+                    href="javascript:openTab(' 搜索管理','searchManage.jsp','icon-shujia')"
                     class="easyui-linkbutton"
                     data-options="plain:true,iconCls:'icon-shujia'"
-                    style="width: 150px;"> 书架管理</a>
+                    style="width: 150px;"> 搜索管理</a>
         </div>
-        <div title="书籍管理" data-options="iconCls:'icon-shuji'"
+        <div title="信息管理" data-options="iconCls:'icon-shuji'"
              style="padding:10px">
             <a
-                    href="javascript:openTab(' 全部书籍','allBooksManage.jsp','icon-shuben')"
+                    href="javascript:openTab(' 全部信息','messageManage.jsp','icon-shuben')"
                     class="easyui-linkbutton"
                     data-options="plain:true,iconCls:'icon-shuben'"
-                    style="width: 150px;">全部书籍</a>
+                    style="width: 150px;">全部信息</a>
         </div>
         <div title="系统管理" data-options="iconCls:'icon-item'"
              style="padding:10px;border:none;">
@@ -155,13 +160,13 @@
             <tr>
                 <td>用户名：</td>
                 <td><input type="text" id="userName" name="userName"
-                           value="${currentUser}" readonly="readonly"
+                           value="${currentUser.userName}" readonly="readonly"
                            style="width: 200px"/>
                 </td>
             </tr>
             <tr>
                 <td>原密码：</td>
-                <td><input type="password" id="oldPassword"
+                <td><input type="password" id="oldPassword" name="oldPassword"
                            class="easyui-validatebox" required="true" style="width: 200px"/>
                 </td>
             </tr>

@@ -18,28 +18,22 @@
     <script type="text/javascript">
         var url;
 
-        function searchUser() {
-            $("#dg").datagrid('load', {
-                "userName": $("#s_userName").val()
-            });
-        }
-
-        function deleteUser() {
+        function deleteMessage() {
             var selectedRows = $("#dg").datagrid('getSelections');
             if (selectedRows.length == 0) {
                 $.messager.alert("系统提示", "请选择要删除的数据！");
                 return;
             }
-            var strNameList = [];
+            var strIdList = [];
             for (var i = 0; i < selectedRows.length; i++) {
-                strNameList.push(selectedRows[i].userName);
+                strIdList.push(selectedRows[i].id);
             }
-            var nameList = strNameList.join(",");
+            var idList = strIdList.join(",");
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
                     + selectedRows.length + "</font>条数据吗？", function (r) {
                 if (r) {
-                    $.post("${pageContext.request.contextPath}/user/delete.do", {
-                        nameList: nameList
+                    $.post("${pageContext.request.contextPath}/message/delete.do", {
+                        idList: idList
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "数据已成功删除！");
@@ -53,12 +47,12 @@
 
         }
 
-        function openUserAddDialog() {
-            $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
-            url = "${pageContext.request.contextPath}/user/register.do";
+        function openMessageAddDialog() {
+            $("#dlg").dialog("open").dialog("setTitle", "添加信息");
+            url = "${pageContext.request.contextPath}/message/add.do";
         }
 
-        function saveUser() {
+        function saveMessage() {
             $("#fm").form("submit", {
                 url: url,
                 onSubmit: function () {
@@ -69,7 +63,7 @@
                     if (_result.success) {
                         $.messager.alert("系统提示", "保存成功");
                     } else {
-                        $.messager.alert("系统提示", "保存失败，用户名已存在");
+                        $.messager.alert("系统提示", "保存失败");
                     }
                     resetValue();
                     $("#dlg").dialog("close");
@@ -78,59 +72,38 @@
             });
         }
 
-        function openUserModifyDialog() {
-            var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择一条要编辑的数据！");
-                return;
-            }
-            var row = selectedRows[0];
-            $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
-            $('#fm').form('load', row);
-            // $("#password").val("******");
-            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=" + row.userName;
-        }
-
         function resetValue() {
-            $("#userName").val("");
-            $("#password").val("");
+            $("#intro").val("");
+            $("#content").val("");
         }
 
-        function closeUserDialog() {
+        function closeMessageDialog() {
             $("#dlg").dialog("close");
             resetValue();
         }
     </script>
 </head>
 <body style="margin:1px;">
-<table id="dg" title="用户管理" class="easyui-datagrid" fitColumns="true"
+<table id="dg" title="信息管理" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/user/list.do" fit="true"
+       url="${pageContext.request.contextPath}/message/list.do" fit="true"
        toolbar="#tb">
     <thead>
     <tr>
         <th field="cb" checkbox="true" align="center"></th>
-        <th field="userName" width="100" align="center">用户名</th>
-        <th field="password" width="100" align="center">密码</th>
-
+        <th field="id" width="50" align="center">编号</th>
+        <th field="intro" width="50" align="center">简介</th>
+        <th field="content" width="150" align="center">内容</th>
     </tr>
     </thead>
 </table>
 <div id="tb">
     <div>
-        <a href="javascript:openUserAddDialog()" class="easyui-linkbutton"
+        <a href="javascript:openMessageAddDialog()" class="easyui-linkbutton"
            iconCls="icon-add" plain="true">添加</a> <a
-            href="javascript:openUserModifyDialog()" class="easyui-linkbutton"
-            iconCls="icon-edit" plain="true">修改</a> <a
-            href="javascript:deleteUser()" class="easyui-linkbutton"
+            href="javascript:deleteMessage()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>
-    <%--<div>--%>
-        <%--&nbsp;用户名：&nbsp;<input type="text" id="s_userName" size="20"--%>
-                               <%--onkeydown="if(event.keyCode==13) searchUser()"/> <a--%>
-            <%--href="javascript:searchUser()" class="easyui-linkbutton"--%>
-            <%--iconCls="icon-search" plain="true">搜索</a>--%>
-    <%--</div>--%>
 </div>
 
 <div id="dlg" class="easyui-dialog"
@@ -139,15 +112,15 @@
     <form id="fm" method="post">
         <table cellspacing="8px">
             <tr>
-                <td>用户名：</td>
-                <td><input type="text" id="userName" name="userName"
+                <td>简介：</td>
+                <td><input type="text" id="intro" name="intro"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
             </tr>
             <tr>
-                <td>密码：</td>
-                <td><input type="text" id="password" name="password"
+                <td>内容：</td>
+                <td><input type="text" id="content" name="content"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
@@ -157,8 +130,8 @@
 </div>
 
 <div id="dlg-buttons">
-    <a href="javascript:saveUser()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeUserDialog()"
+    <a href="javascript:saveMessage()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a> <a href="javascript:closeMessageDialog()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>

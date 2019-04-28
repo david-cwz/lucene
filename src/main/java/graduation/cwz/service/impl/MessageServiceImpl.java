@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -37,9 +38,19 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public List<Message> getMessageList() {
+    public List<Message> getMessageList(Map<String, Object> map) {
         try {
-            return messageDao.getMessageList();
+            return messageDao.getMessageList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Message> getAllMessageList() {
+        try {
+            return messageDao.getAllMessageList();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -87,7 +98,7 @@ public class MessageServiceImpl implements MessageService {
             indexWriter = new IndexWriter(directory, indexWriterConfig);
             indexWriter.deleteAll();// 清除以前的index
 
-            List<Message> messageList = getMessageList();
+            List<Message> messageList = getAllMessageList();
             for (Message message : messageList) {
                 Document document = new Document();
                 document.add(new Field("id", String.valueOf(message.getId()), TextField.TYPE_STORED));

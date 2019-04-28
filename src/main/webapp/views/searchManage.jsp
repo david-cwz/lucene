@@ -65,12 +65,7 @@
                     return $(this).form("validate");
                 },
                 success: function (result) {
-                    var _result = JSON.parse(result);
-                    if (_result.success) {
-                        $.messager.alert("系统提示", "保存成功");
-                    } else {
-                        $.messager.alert("系统提示", "保存失败，用户名已存在");
-                    }
+                    $.messager.alert("系统提示", "保存成功");
                     resetValue();
                     $("#dlg").dialog("close");
                     $("#dg").datagrid("reload");

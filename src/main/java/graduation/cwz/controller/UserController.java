@@ -44,7 +44,7 @@ public class UserController {
             return "login";
         } else {
             HttpSession session = request.getSession();
-            session.setAttribute("currentUser", userData.getUserName());
+            session.setAttribute("currentUser", userData);
             return "redirect:/main.jsp";
         }
 
@@ -52,9 +52,6 @@ public class UserController {
 
     /**
      * 退出系统
-     *
-     * @return
-     * @throws Exception
      */
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
@@ -64,13 +61,9 @@ public class UserController {
 
     /**
      * 添加用户
-     *
-     * @param response
-     * @return
-     * @throws Exception
      */
     @RequestMapping("/register")
-    public String save(UserData userData, HttpServletResponse response) throws Exception {
+    public String register(UserData userData, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
             userService.register(userData);

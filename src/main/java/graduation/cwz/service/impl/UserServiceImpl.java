@@ -3,7 +3,6 @@ package graduation.cwz.service.impl;
 import graduation.cwz.dao.UserDao;
 import graduation.cwz.entity.User;
 import graduation.cwz.model.UserData;
-import graduation.cwz.service.ConfigurationService;
 import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +14,25 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private ConfigurationService configurationService;
 
     @Override
     public List<User> getUserList(Map<String, Object> map) {
-        return userDao.getUserList(map);
+        try {
+            return userDao.getUserList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     public List<User> getAllUserList() {
-        return userDao.getAllUserList();
+        try {
+            return userDao.getAllUserList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
@@ -74,7 +82,6 @@ public class UserServiceImpl implements UserService {
             for (User user : list) {
                 if (user.getUserName().equals(username)) {
                     if (user.getPassword().equals(password)) {
-                        configurationService.updateCurrentUser(username);
                         return "";
                     } else {
                         return "wrong password";

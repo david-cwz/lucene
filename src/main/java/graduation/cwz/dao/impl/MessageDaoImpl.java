@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class MessageDaoImpl implements MessageDao {
@@ -17,8 +18,25 @@ public class MessageDaoImpl implements MessageDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<Message> getMessageList() {
-        List<Message> list = null;
+    public List<Message> getMessageList(Map<String, Object> map) {
+        List<Message> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from Message m ");
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public List<Message> getAllMessageList() {
+        List<Message> list;
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from Message m ");
             list = query.list();
