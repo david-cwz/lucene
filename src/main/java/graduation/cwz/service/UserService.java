@@ -11,5 +11,6 @@ public interface UserService {
     void register(UserData userData) throws Exception;
     void delUser(String deleteName) throws Exception;
     void modifyInfo(UserData userData) throws Exception;
-    String login(UserData loginData) throws Exception; //登陆成功返回true，否则false
+    String login(UserData loginData) throws Exception;
+    User getUserByName(String userName);
 }

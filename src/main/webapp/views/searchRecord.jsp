@@ -18,34 +18,28 @@
     <script type="text/javascript">
         var url;
 
-        function searchUser() {
-            $("#dg").datagrid('load', {
-                "userName": $("#s_userName").val()
-            });
-        }
-
-        function deleteUser() {
+        function deleteRecord() {
             var selectedRows = $("#dg").datagrid('getSelections');
             if (selectedRows.length == 0) {
                 $.messager.alert("系统提示", "请选择要删除的数据！");
                 return;
             }
-            var strNameList = [];
+            var strIdList = [];
             for (var i = 0; i < selectedRows.length; i++) {
-                strNameList.push(selectedRows[i].userName);
+                strIdList.push(selectedRows[i].id);
             }
-            var nameList = strNameList.join(",");
+            var idList = strIdList.join(",");
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
-                    + selectedRows.length + "</font>条数据吗？", function (r) {
+                + selectedRows.length + "</font>条数据吗？", function (r) {
                 if (r) {
-                    $.post("${pageContext.request.contextPath}/user/delete.do", {
-                        nameList: nameList
+                    $.post("${pageContext.request.contextPath}/record/delete.do", {
+                        idList: idList
                     }, function (result) {
                         if (result.success) {
-                            $.messager.alert("系统提示", "数据已成功删除！");
+                            $.messager.alert("系统提示", "记录已成功删除！");
                             $("#dg").datagrid("reload");
                         } else {
-                            $.messager.alert("系统提示", "数据删除失败！");
+                            $.messager.alert("系统提示", "记录删除失败！");
                         }
                     }, "json");
                 }
@@ -53,19 +47,24 @@
 
         }
 
-        function openUserAddDialog() {
-            $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
-            url = "${pageContext.request.contextPath}/user/register.do";
+        function openRecordAddDialog() {
+            $("#dlg").dialog("open").dialog("setTitle", "添加记录");
+            url = "${pageContext.request.contextPath}/record/add.do";
         }
 
-        function saveUser() {
+        function saveRecord() {
             $("#fm").form("submit", {
                 url: url,
                 onSubmit: function () {
                     return $(this).form("validate");
                 },
                 success: function (result) {
-                    $.messager.alert("系统提示", "保存成功");
+                    var _result = JSON.parse(result);
+                    if (_result.success) {
+                        $.messager.alert("系统提示", "保存成功");
+                    } else {
+                        $.messager.alert("系统提示", "保存失败");
+                    }
                     resetValue();
                     $("#dlg").dialog("close");
                     $("#dg").datagrid("reload");
@@ -73,59 +72,38 @@
             });
         }
 
-        function openUserModifyDialog() {
-            var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择一条要编辑的数据！");
-                return;
-            }
-            var row = selectedRows[0];
-            $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
-            $('#fm').form('load', row);
-            // $("#password").val("******");
-            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=" + row.userName;
-        }
-
         function resetValue() {
-            $("#userName").val("");
-            $("#password").val("");
+            $("#record").val("");
+            // $("#date").val("");
         }
 
-        function closeUserDialog() {
+        function closeRecordDialog() {
             $("#dlg").dialog("close");
             resetValue();
         }
     </script>
 </head>
 <body style="margin:1px;">
-<table id="dg" title="用户管理" class="easyui-datagrid" fitColumns="true"
+<table id="dg" title="我的搜索记录" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/user/list.do" fit="true"
+       url="${pageContext.request.contextPath}/record/list.do?userName=${currentUser.userName}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>
         <th field="cb" checkbox="true" align="center"></th>
-        <th field="userName" width="100" align="center">用户名</th>
-        <th field="password" width="100" align="center">密码</th>
-
+        <th field="id" width="50" align="center">编号</th>
+        <th field="record" width="100" align="center">搜索内容</th>
+        <th field="date" width="50" align="center">搜索日期</th>
     </tr>
     </thead>
 </table>
 <div id="tb">
     <div>
-        <a href="javascript:openUserAddDialog()" class="easyui-linkbutton"
+        <a href="javascript:openRecordAddDialog()" class="easyui-linkbutton"
            iconCls="icon-add" plain="true">添加</a> <a
-            href="javascript:openUserModifyDialog()" class="easyui-linkbutton"
-            iconCls="icon-edit" plain="true">修改</a> <a
-            href="javascript:deleteUser()" class="easyui-linkbutton"
+            href="javascript:deleteRecord()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>
-    <%--<div>--%>
-        <%--&nbsp;用户名：&nbsp;<input type="text" id="s_userName" size="20"--%>
-                               <%--onkeydown="if(event.keyCode==13) searchUser()"/> <a--%>
-            <%--href="javascript:searchUser()" class="easyui-linkbutton"--%>
-            <%--iconCls="icon-search" plain="true">搜索</a>--%>
-    <%--</div>--%>
 </div>
 
 <div id="dlg" class="easyui-dialog"
@@ -134,15 +112,16 @@
     <form id="fm" method="post">
         <table cellspacing="8px">
             <tr>
-                <td>用户名：</td>
+                <td>当前用户：</td>
                 <td><input type="text" id="userName" name="userName"
+                           value="${currentUser.userName}" readonly="readonly"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
             </tr>
             <tr>
-                <td>密码：</td>
-                <td><input type="text" id="password" name="password"
+                <td>搜索内容：</td>
+                <td><input type="text" id="record" name="record"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
@@ -152,8 +131,8 @@
 </div>
 
 <div id="dlg-buttons">
-    <a href="javascript:saveUser()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeUserDialog()"
+    <a href="javascript:saveRecord()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a> <a href="javascript:closeRecordDialog()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>

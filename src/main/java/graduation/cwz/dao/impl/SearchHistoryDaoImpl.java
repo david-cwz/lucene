@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SearchHistoryDaoImpl implements SearchHistoryDao {
@@ -18,25 +19,17 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<SearchHistory> getRecordList() {
-        List<SearchHistory> list = null;
-        try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from SearchHistory");
-            list = query.list();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return list;
-    }
-
-    @Override
-    public List<SearchHistory> getRecordListByUser(String username) {
-        List<SearchHistory> list = null;
+    public List<SearchHistory> getRecordList(Map<String, Object> map) {
+        List<SearchHistory> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        String userName = (String)map.get("userName");
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from SearchHistory sh " +
-                    "where sh.user.username=:username");
-            query.setParameter("username", username);
+                    "where sh.user.userName=:userName");
+            query.setParameter("userName", userName);
+            query.setFirstResult(start);
+            query.setMaxResults(size);
             list = query.list();
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,9 +39,9 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
-    public void addRecord(String record, String username) {
+    public void addRecord(String record, User user, String date) {
         try (Session session = sessionFactory.openSession()) {
-            SearchHistory searchHistory = new SearchHistory(record, new User(username));
+            SearchHistory searchHistory = new SearchHistory(record, user, date);
             Transaction transaction = session.beginTransaction();
             session.save(searchHistory);
             transaction.commit();

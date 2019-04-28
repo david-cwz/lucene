@@ -3,7 +3,6 @@ package graduation.cwz.model;
 public class UserData {
     private String userName;
     private String password;
-    private String deleteName;
     private String oldName;
 
     public String getUserName() {
@@ -20,14 +19,6 @@ public class UserData {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getDeleteName() {
-        return deleteName;
-    }
-
-    public void setDeleteName(String deleteName) {
-        this.deleteName = deleteName;
     }
 
     public String getOldName() {

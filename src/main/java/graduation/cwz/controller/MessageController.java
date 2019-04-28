@@ -4,7 +4,6 @@ import graduation.cwz.entity.Message;
 import graduation.cwz.model.MessageData;
 import graduation.cwz.model.PageBean;
 import graduation.cwz.service.MessageService;
-import graduation.cwz.utils.JSONUtil;
 import graduation.cwz.utils.ResponseUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -12,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

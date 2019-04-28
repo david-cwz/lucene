@@ -2,21 +2,27 @@ package graduation.cwz.service.impl;
 
 import graduation.cwz.dao.SearchHistoryDao;
 import graduation.cwz.entity.SearchHistory;
+import graduation.cwz.entity.User;
+import graduation.cwz.model.RecordData;
 import graduation.cwz.service.SearchHistoryService;
+import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SearchHistoryServiceImpl implements SearchHistoryService {
     @Autowired
     SearchHistoryDao searchHistoryDao;
+    @Autowired
+    UserService userService;
 
     @Override
-    public List<SearchHistory> getRecordList() {
+    public List<SearchHistory> getRecordList(Map<String, Object> map) {
         try {
-            return searchHistoryDao.getRecordList();
+            return searchHistoryDao.getRecordList(map);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -24,19 +30,10 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     }
 
     @Override
-    public List<SearchHistory> getRecordListByUser(String username) {
+    public void addRecord(RecordData recordData) {
         try {
-            return searchHistoryDao.getRecordListByUser(username);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    @Override
-    public void addRecord(String record, String username) {
-        try {
-            searchHistoryDao.addRecord(record, username);
+            User user = userService.getUserByName(recordData.getUserName());
+            searchHistoryDao.addRecord(recordData.getRecord(), user, recordData.getDate());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

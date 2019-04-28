@@ -1,12 +1,14 @@
 package graduation.cwz.service;
 
 import graduation.cwz.entity.SearchHistory;
+import graduation.cwz.model.RecordData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SearchHistoryService {
-    List<SearchHistory> getRecordList();
-    List<SearchHistory> getRecordListByUser(String username);
-    void addRecord(String record, String username);
+    List<SearchHistory> getRecordList(Map<String, Object> map);
+    void addRecord(RecordData recordData);
     void delRecord(int deleteId);
+
 }

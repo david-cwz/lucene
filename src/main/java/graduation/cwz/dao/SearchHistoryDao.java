@@ -1,12 +1,13 @@
 package graduation.cwz.dao;
 
 import graduation.cwz.entity.SearchHistory;
+import graduation.cwz.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SearchHistoryDao {
-    List<SearchHistory> getRecordList();
-    List<SearchHistory> getRecordListByUser(String username);
-    void addRecord(String record, String username);
+    List<SearchHistory> getRecordList(Map<String, Object> map);
+    void addRecord(String record, User user, String date);
     void delRecord(int deleteId);
 }

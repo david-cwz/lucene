@@ -36,6 +36,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByName(String userName) {
+        try {
+            List<User> list = userDao.getAllUserList();
+            for (User user : list) {
+                if (userName.equals(user.getUserName())) {
+                    return user;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
+    }
+
+    @Override
     public void register(UserData userData) throws Exception {
         try {
             if (userData == null || userData.getPassword() == null || userData.getUserName() == null) {

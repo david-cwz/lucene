@@ -123,10 +123,10 @@
         <div title="搜索管理" data-options="iconCls:'icon-shujias'"
              style="padding:10px">
             <a
-                    href="javascript:openTab(' 搜索管理','searchManage.jsp','icon-shujia')"
+                    href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
                     class="easyui-linkbutton"
                     data-options="plain:true,iconCls:'icon-shujia'"
-                    style="width: 150px;"> 搜索管理</a>
+                    style="width: 150px;"> 我的搜索记录</a>
         </div>
         <div title="信息管理" data-options="iconCls:'icon-shuji'"
              style="padding:10px">

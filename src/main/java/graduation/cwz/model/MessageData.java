@@ -1,18 +1,9 @@
 package graduation.cwz.model;
 
 public class MessageData {
-    private int deleteId;
     private String intro;
     private String content;
     private String keyWord;
-
-    public int getDeleteId() {
-        return deleteId;
-    }
-
-    public void setDeleteId(int deleteId) {
-        this.deleteId = deleteId;
-    }
 
     public String getIntro() {
         return intro;

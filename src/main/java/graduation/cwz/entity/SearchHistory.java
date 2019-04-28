@@ -14,13 +14,18 @@ public class SearchHistory {
     private String record;
 
     @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)//cascade规定了级联操作，ALL包括添加、修改、删除操作
-    @JoinColumn(name="username")
+    @JoinColumn(name="userName")
     private User user;
 
+    @Column(name = "date")
+    private String date;
+
     public SearchHistory() {}
-    public SearchHistory(String record, User user) {
+
+    public SearchHistory(String record, User user, String date) {
         this.record = record;
         this.user = user;
+        this.date = date;
     }
 
     public int getId() {
@@ -45,5 +50,13 @@ public class SearchHistory {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

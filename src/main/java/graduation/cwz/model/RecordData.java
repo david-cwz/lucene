@@ -1,17 +1,10 @@
 package graduation.cwz.model;
 
 public class RecordData {
-    private int deleteId;
+
     private String record;
-    private String username;
-
-    public int getDeleteId() {
-        return deleteId;
-    }
-
-    public void setDeleteId(int deleteId) {
-        this.deleteId = deleteId;
-    }
+    private String userName;
+    private String date;
 
     public String getRecord() {
         return record;
@@ -21,11 +14,19 @@ public class RecordData {
         this.record = record;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
