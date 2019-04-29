@@ -4,7 +4,6 @@ import graduation.cwz.dao.MessageDao;
 import graduation.cwz.entity.Message;
 import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
-import graduation.cwz.utils.JSONUtil;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
@@ -77,17 +76,12 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    @Override
-    public String search(String keyWord) {
-        creatIndex();
-        List<SearchResultData> resultList = searchLucene(keyWord);
-        return JSONUtil.listToJson(resultList);
-    }
 
     /**
      * 创建索引
      */
-    public void creatIndex() {
+    @Override
+    public void createIndex() {
 
         IndexWriter indexWriter = null;
         try
@@ -107,19 +101,12 @@ public class MessageServiceImpl implements MessageService {
                 indexWriter.addDocument(document);
             }
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 if(indexWriter != null) indexWriter.close();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -128,7 +115,8 @@ public class MessageServiceImpl implements MessageService {
     /**
      * 搜索
      */
-    public List<SearchResultData> searchLucene(String keyWord) {
+    @Override
+    public List<SearchResultData> search(String keyWord) {
         List<SearchResultData> resultList = new ArrayList<>();
         DirectoryReader directoryReader = null;
         try
@@ -160,11 +148,10 @@ public class MessageServiceImpl implements MessageService {
             System.out.println("共找到匹配文档数：" + scoreDocs.length);
 
             QueryScorer scorer = new QueryScorer(multiFieldQuery, "content");
-            SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter("<span style=\"backgroud:red\">", "</span>");
+            SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter("“", "”");
             Highlighter highlighter = new Highlighter(htmlFormatter, scorer);
             highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer));
-            for (ScoreDoc scoreDoc : scoreDocs)
-            {
+            for (ScoreDoc scoreDoc : scoreDocs) {
                 // 7、根据searcher和ScoreDoc对象获取具体的Document对象
                 Document document = indexSearcher.doc(scoreDoc.doc);
                 String id = document.get("id");
@@ -187,14 +174,12 @@ public class MessageServiceImpl implements MessageService {
                 System.out.println("");
                 // 8、根据Document对象获取需要的值
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
                 if(directoryReader != null) directoryReader.close();
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

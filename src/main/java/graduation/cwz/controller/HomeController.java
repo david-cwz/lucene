@@ -14,10 +14,4 @@ public class HomeController {
         return "main";
     }
 
-    @RequestMapping(value = "/result")
-    public String result() {
-        return "result";
-    }
-
-
 }

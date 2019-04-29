@@ -10,5 +10,4 @@ public interface MessageDao {
     List<Message> getAllMessageList();
     void addMessage(String intro, String content);
     void delMessage(int deleteId);
-
 }

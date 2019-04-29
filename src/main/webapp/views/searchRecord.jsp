@@ -47,9 +47,32 @@
 
         }
 
-        function openRecordAddDialog() {
-            $("#dlg").dialog("open").dialog("setTitle", "添加记录");
-            url = "${pageContext.request.contextPath}/record/add.do";
+        function openRecordShiftDialog() {
+            var selectedRows = $("#dg").datagrid('getSelections');
+            if (selectedRows.length == 0) {
+                $.messager.alert("系统提示", "请选择要转换的记录！");
+                return;
+            }
+            var strIdList = [];
+            for (var i = 0; i < selectedRows.length; i++) {
+                strIdList.push(selectedRows[i].id);
+            }
+            var idList = strIdList.join(",");
+            $.messager.confirm("系统提示", "您确认要转换这<font color=red>"
+                + selectedRows.length + "</font>条记录的预埋单状态吗？", function (r) {
+                if (r) {
+                    $.post("${pageContext.request.contextPath}/record/shiftStatus.do", {
+                        idList: idList
+                    }, function (result) {
+                        if (result.success) {
+                            $.messager.alert("系统提示", "转换成功！");
+                            $("#dg").datagrid("reload");
+                        } else {
+                            $.messager.alert("系统提示", "转换失败！");
+                        }
+                    }, "json");
+                }
+            });
         }
 
         function saveRecord() {
@@ -94,13 +117,14 @@
         <th field="id" width="50" align="center">编号</th>
         <th field="record" width="100" align="center">搜索内容</th>
         <th field="date" width="50" align="center">搜索日期</th>
+        <th field="isisPreEmbedded" width="150" align="center">是否预埋单</th>
     </tr>
     </thead>
 </table>
 <div id="tb">
     <div>
-        <a href="javascript:openRecordAddDialog()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">添加</a> <a
+        <a href="javascript:openRecordShiftDialog()" class="easyui-linkbutton"
+           iconCls="icon-add" plain="true">转换预埋单状态</a> <a
             href="javascript:deleteRecord()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>

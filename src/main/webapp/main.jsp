@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">--%>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -15,6 +16,17 @@
             src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script type="text/javascript" src="views/js/vue.js"></script>
+    <script type="text/javascript" src="views/js/vue-resource.js"></script>
+    <script type="text/javascript" src="views/js/index.js"></script>
+    <!--<link rel="stylesheet" href="css/input.css" type="text/css" />-->
+    <link rel="icon" href="views/img/icon.jpg">
+    <link rel="stylesheet" href="views/css/index.css">
+
     <script type="text/javascript">
         var url;
         function addTab(url, text, iconCls) {
@@ -93,6 +105,33 @@
                                 }
                             });
         }
+
+        window.onload=function(){
+            new Vue({
+                el:'#box',
+                data:{
+                    myData:[],
+                    t1:'',
+                    now:-1,
+                    isShow:true,
+                },
+                methods:{
+                    search:function(){
+                        $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + this.t1, {
+                        }, function (result) {
+                        }, "json");
+
+                        openTab(' 搜索结果','searchResult.jsp','icon-shujia');
+                        this.t1='';
+                    },
+                }
+            });
+        }
+
+        function clearText(elm){
+            elm.value="";
+            elm.onfocus=null;
+        }
     </script>
     <jsp:include page="login_chk.jsp"></jsp:include>
 <body class="easyui-layout">
@@ -109,10 +148,37 @@
 </div>
 <div region="center">
     <div class="easyui-tabs" fit="true" border="false" id="tabs">
-        <div title="首页" data-options="iconCls:'icon-home'">
-            <div align="center" style="padding-top: 100px">
-                <font color="grey" size="10">ssm demo</font>
+        <div title="搜索首页" data-options="iconCls:'icon-home'">
+
+            <section>
+                <img src="views/img/title.PNG" alt="未加载成功">
+                <div id="box" >
+                    <sapn class="center">
+                <span class="center_left">
+                    <input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" value="请输入你想要搜索的关键字" onfocus="clearText(this)">
+                    <ul id="boxUl" v-if="isShow">
+                        <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
+                            <!--{{value}}-->
+                        </li>
+                    </ul>
+                </span>
+                        <span class="center_right">
+                    <input type="button" value="搜索" @click="search()">
+                </span>
+                    </sapn>
+
+                </div>
+            </section>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+                <p>产品功能如下</p>
+                <p>·用户管理：用户注册、用户登陆、数据库存储用户信息</p>
+                <p>·信息管理：提交信息、存储信息、搜索信息、显示信息</p>
+                <p>·基于Lucene的检索引擎</p>
+                <p>·提交搜索信息，在网站中检索匹配的信息并展示</p>
+                <p>·在未来有人提交了匹配信息时，可以收到邮件反馈</p>
             </div>
+
         </div>
     </div>
 </div>

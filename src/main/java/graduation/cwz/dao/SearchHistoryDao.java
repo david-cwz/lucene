@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface SearchHistoryDao {
     List<SearchHistory> getRecordList(Map<String, Object> map);
+    List<SearchHistory> getAllRecordList();
     void addRecord(String record, User user, String date);
     void delRecord(int deleteId);
+    void updateStatus(int id, boolean isisPreEmbedded);
 }

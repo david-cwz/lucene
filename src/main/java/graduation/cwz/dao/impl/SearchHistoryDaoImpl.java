@@ -39,6 +39,19 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
+    public List<SearchHistory> getAllRecordList() {
+        List<SearchHistory> list;
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from SearchHistory ");
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
     public void addRecord(String record, User user, String date) {
         try (Session session = sessionFactory.openSession()) {
             SearchHistory searchHistory = new SearchHistory(record, user, date);
@@ -58,6 +71,22 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
             Query query = session.createQuery("delete from SearchHistory sh " +
                     "where sh.id=:deleteId");
             query.setParameter("deleteId", deleteId);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateStatus(int id, boolean isisPreEmbedded) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update SearchHistory sh set sh.isisPreEmbedded=:isisPreEmbedded " +
+                    "where sh.id=:id");
+            query.setParameter("isisPreEmbedded", isisPreEmbedded);
+            query.setParameter("id", id);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

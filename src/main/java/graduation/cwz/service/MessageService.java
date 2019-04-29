@@ -1,6 +1,7 @@
 package graduation.cwz.service;
 
 import graduation.cwz.entity.Message;
+import graduation.cwz.model.SearchResultData;
 
 import java.util.List;
 import java.util.Map;
@@ -10,5 +11,6 @@ public interface MessageService {
     List<Message> getAllMessageList();
     void addMessage(String intro, String content);
     void delMessage(int deletId);
-    String search(String keyWord);
+    void createIndex();
+    List<SearchResultData> search(String keyWord);
 }

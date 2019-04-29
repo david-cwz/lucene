@@ -37,6 +37,16 @@
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "数据已成功删除！");
+
+                            $.post("${pageContext.request.contextPath}/message/index.do", {
+                            }, function (result) {
+                                if (result.success) {
+                                    $.messager.alert("系统提示", "lucene索引更新成功！");
+                                } else {
+                                    $.messager.alert("系统提示", "lucene索引更新失败！");
+                                }
+                            }, "json");
+
                             $("#dg").datagrid("reload");
                         } else {
                             $.messager.alert("系统提示", "数据删除失败！");
@@ -62,6 +72,16 @@
                     var _result = JSON.parse(result);
                     if (_result.success) {
                         $.messager.alert("系统提示", "保存成功");
+
+                        $.post("${pageContext.request.contextPath}/message/index.do", {
+                        }, function (result) {
+                            if (result.success) {
+                                $.messager.alert("系统提示", "lucene索引更新成功！");
+                            } else {
+                                $.messager.alert("系统提示", "lucene索引更新失败！");
+                            }
+                        }, "json");
+
                     } else {
                         $.messager.alert("系统提示", "保存失败");
                     }

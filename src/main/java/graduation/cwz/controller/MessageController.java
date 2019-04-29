@@ -3,6 +3,7 @@ package graduation.cwz.controller;
 import graduation.cwz.entity.Message;
 import graduation.cwz.model.MessageData;
 import graduation.cwz.model.PageBean;
+import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
 import graduation.cwz.utils.ResponseUtil;
 import net.sf.json.JSONArray;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,16 +78,36 @@ public class MessageController {
         return null;
     }
 
-    @RequestMapping(value="/search")
-    @ResponseBody
-    public String searchRecord(@RequestParam(value = "keyWord") String keyWord){
-        String result;
+    @RequestMapping("/index")
+    public String index(HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
         try {
-            result = messageService.search(keyWord);
+            messageService.createIndex();
+            result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            result.put("success", false);
         }
-        return result;
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/search")
+    public String search(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
+        List<SearchResultData> resultList = messageService.search(keyWord);
+        int total = resultList.size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(resultList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/setKeyWord")
+    public String setKeyWord(@RequestParam(value = "keyWord") String keyWord, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        session.setAttribute("keyWord", keyWord);
+        return null;
     }
 }

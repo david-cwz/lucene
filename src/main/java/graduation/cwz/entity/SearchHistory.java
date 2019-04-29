@@ -20,6 +20,9 @@ public class SearchHistory {
     @Column(name = "date")
     private String date;
 
+    @Column(name = "isPreEmbedded")
+    private boolean isisPreEmbedded = true;
+
     public SearchHistory() {}
 
     public SearchHistory(String record, User user, String date) {
@@ -58,5 +61,13 @@ public class SearchHistory {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public boolean isIsisPreEmbedded() {
+        return isisPreEmbedded;
+    }
+
+    public void setIsisPreEmbedded(boolean isisPreEmbedded) {
+        this.isisPreEmbedded = isisPreEmbedded;
     }
 }

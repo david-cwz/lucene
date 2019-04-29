@@ -30,6 +30,16 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     }
 
     @Override
+    public List<SearchHistory> getAllRecordList() {
+        try {
+            return searchHistoryDao.getAllRecordList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public void addRecord(RecordData recordData) {
         try {
             User user = userService.getUserByName(recordData.getUserName());
@@ -44,6 +54,22 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     public void delRecord(int deleteId) {
         try {
             searchHistoryDao.delRecord(deleteId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void shiftStatus(int id) {
+        try {
+            List<SearchHistory> list = getAllRecordList();
+            for (SearchHistory record : list) {
+                if (record.getId() == id) {
+                    searchHistoryDao.updateStatus(id, !record.isIsisPreEmbedded());
+                    return;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

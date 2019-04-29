@@ -86,4 +86,24 @@ public class SearchHistoryController {
         return null;
     }
 
+    /**
+     * 转换状态
+     */
+    @RequestMapping("/shiftStatus")
+    public String shiftStatus(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            String[] idListStr = idList.split(",");
+            for (int i = 0; i < idListStr.length; i++) {
+                searchHistoryService.shiftStatus(Integer.parseInt(idListStr[i]));
+            }
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
 }
