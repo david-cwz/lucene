@@ -22,7 +22,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <script type="text/javascript" src="views/js/vue.js"></script>
     <script type="text/javascript" src="views/js/vue-resource.js"></script>
-    <script type="text/javascript" src="views/js/index.js"></script>
     <!--<link rel="stylesheet" href="css/input.css" type="text/css" />-->
     <link rel="icon" href="views/img/icon.jpg">
     <link rel="stylesheet" href="views/css/index.css">
@@ -51,7 +50,7 @@
 
         function openPasswordModifyDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "修改密码");
-            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=${currentUser.userName}";
+            url = "${pageContext.request.contextPath}/user/modifyPassword.do?";
         }
 
         function closePasswordModifyDialog() {
@@ -118,6 +117,12 @@
                 methods:{
                     search:function(){
                         $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + this.t1, {
+                        }, function (result) {
+                        }, "json");
+
+                        $.post("${pageContext.request.contextPath}/record/add.do", {
+                            record:this.t1,
+                            userName:"${currentUser.userName}"
                         }, function (result) {
                         }, "json");
 

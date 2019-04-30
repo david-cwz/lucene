@@ -8,9 +8,10 @@ import java.util.Map;
 
 public interface UserService {
     List<User> getUserList(Map<String, Object> map);
-    void register(UserData userData) throws Exception;
-    void delUser(String deleteName) throws Exception;
-    void modifyInfo(UserData userData) throws Exception;
-    String login(UserData loginData) throws Exception;
+    void register(UserData userData);
+    void delUser(String deleteName);
+    void modifyPassword(String userName, String password);
+    void modifyEmail(String userName, String email);
+    String login(UserData userData);
     User getUserByName(String userName);
 }

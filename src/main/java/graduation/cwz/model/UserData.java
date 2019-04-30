@@ -3,7 +3,7 @@ package graduation.cwz.model;
 public class UserData {
     private String userName;
     private String password;
-    private String oldName;
+    private String email;
 
     public String getUserName() {
         return userName;
@@ -21,11 +21,11 @@ public class UserData {
         this.password = password;
     }
 
-    public String getOldName() {
-        return oldName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setOldName(String oldName) {
-        this.oldName = oldName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

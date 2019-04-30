@@ -22,7 +22,7 @@
     </script>
 </head>
 <body style="margin:1px;">
-<table id="dg" title="搜索结果" class="easyui-datagrid" fitColumns="true"
+<table id="dg" title="“${keyWord}”的搜索结果" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
        url="${pageContext.request.contextPath}/message/search.do?keyWord=${keyWord}" fit="true"
        toolbar="#tb">

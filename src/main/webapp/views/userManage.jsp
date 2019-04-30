@@ -53,12 +53,20 @@
 
         }
 
-        function openUserAddDialog() {
-            $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
-            url = "${pageContext.request.contextPath}/user/register.do";
+        function openEmailModifyDialog() {
+            var selectedRows = $("#dg").datagrid('getSelections');
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择“一”条要编辑的数据！");
+                return;
+            }
+            var row = selectedRows[0];
+            $("#dlg").dialog("open").dialog("setTitle", "修改用户邮箱");
+            $('#fm').form('load', row);
+            // $("#password").val("******");
+            url = "${pageContext.request.contextPath}/user/modifyEmail.do";
         }
 
-        function saveUser() {
+        function modifyEmail() {
             $("#fm").form("submit", {
                 url: url,
                 onSubmit: function () {
@@ -67,28 +75,15 @@
                 success: function (result) {
                     var _result = JSON.parse(result);
                     if (_result.success) {
-                        $.messager.alert("系统提示", "保存成功");
+                        $.messager.alert("系统提示", "邮箱修改成功");
                     } else {
-                        $.messager.alert("系统提示", "保存失败，用户名已存在");
+                        $.messager.alert("系统提示", "邮箱修改失败");
                     }
                     resetValue();
                     $("#dlg").dialog("close");
                     $("#dg").datagrid("reload");
                 }
             });
-        }
-
-        function openUserModifyDialog() {
-            var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择一条要编辑的数据！");
-                return;
-            }
-            var row = selectedRows[0];
-            $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
-            $('#fm').form('load', row);
-            // $("#password").val("******");
-            url = "${pageContext.request.contextPath}/user/modifyInfo.do?oldName=" + row.userName;
         }
 
         function resetValue() {
@@ -111,19 +106,17 @@
     <tr>
         <th field="cb" checkbox="true" align="center"></th>
         <th field="userName" width="100" align="center">用户名</th>
-        <th field="password" width="100" align="center">密码</th>
+        <th field="email" width="100" align="center">邮箱</th>
 
     </tr>
     </thead>
 </table>
 <div id="tb">
     <div>
-        <a href="javascript:openUserAddDialog()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">添加</a> <a
-            href="javascript:openUserModifyDialog()" class="easyui-linkbutton"
-            iconCls="icon-edit" plain="true">修改</a> <a
+         <a href="javascript:openEmailModifyDialog()" class="easyui-linkbutton"
+            iconCls="icon-edit" plain="true">修改所选用户邮箱</a> <a
             href="javascript:deleteUser()" class="easyui-linkbutton"
-            iconCls="icon-remove" plain="true">删除</a>
+            iconCls="icon-remove" plain="true">删除用户</a>
     </div>
     <%--<div>--%>
         <%--&nbsp;用户名：&nbsp;<input type="text" id="s_userName" size="20"--%>
@@ -141,13 +134,14 @@
             <tr>
                 <td>用户名：</td>
                 <td><input type="text" id="userName" name="userName"
+                           readonly="readonly"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
             </tr>
             <tr>
-                <td>密码：</td>
-                <td><input type="text" id="password" name="password"
+                <td>邮箱：</td>
+                <td><input type="text" id="email" name="email"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
@@ -157,7 +151,7 @@
 </div>
 
 <div id="dlg-buttons">
-    <a href="javascript:saveUser()" class="easyui-linkbutton"
+    <a href="javascript:modifyEmail()" class="easyui-linkbutton"
        iconCls="icon-ok">保存</a> <a href="javascript:closeUserDialog()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>

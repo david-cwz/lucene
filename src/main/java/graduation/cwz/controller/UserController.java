@@ -60,7 +60,7 @@ public class UserController {
     }
 
     /**
-     * 添加用户
+     * 注册
      */
     @RequestMapping("/register")
     public String register(UserData userData, HttpServletResponse response) throws Exception {
@@ -76,11 +76,25 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping(value="/modifyInfo")
-    public String modifyInfo(UserData userData, HttpServletResponse response)throws Exception{
+    @RequestMapping("/modifyPassword")
+    public String modifyPassword(UserData userData, HttpServletResponse response)throws Exception{
         JSONObject result = new JSONObject();
         try {
-            userService.modifyInfo(userData);
+            userService.modifyPassword(userData.getUserName(), userData.getPassword());
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/modifyEmail")
+    public String modifyEmail(UserData userData, HttpServletResponse response)throws Exception{
+        JSONObject result = new JSONObject();
+        try {
+            userService.modifyEmail(userData.getUserName(), userData.getEmail());
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

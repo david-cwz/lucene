@@ -210,6 +210,13 @@
                 </td>
             </tr>
             <tr>
+                <td>邮箱：</td>
+                <td><input type="text" id="email" name="email"
+                           class="easyui-validatebox" required="true"/>&nbsp;<font
+                        color="red">*</font>
+                </td>
+            </tr>
+            <tr>
                 <td>密码：</td>
                 <td><input type="text" id="registerPassword" name="password"
                            class="easyui-validatebox" required="true"/>&nbsp;<font

@@ -51,9 +51,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void addUser(String username, String password) {
+    public void addUser(String username, String password, String email) {
         try (Session session = sessionFactory.openSession()) {
-            User user = new User(username, password);
+            User user = new User(username, password, email);
             Transaction transaction = session.beginTransaction();
             session.save(user);
             transaction.commit();
@@ -80,14 +80,29 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void modifyInfo(String userName, String password, String oldName) {
+    public void modifyPassword(String userName, String password) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update User u set u.userName=:userName, u.password=:password " +
-                    "where u.userName=:oldName");
-            query.setParameter("userName", userName);
+            Query query = session.createQuery("update User u set u.password=:password " +
+                    "where u.userName=:userName");
             query.setParameter("password", password);
-            query.setParameter("oldName", oldName);
+            query.setParameter("userName", userName);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void modifyEmail(String userName, String email) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update User u set u.email=:email " +
+                    "where u.userName=:userName");
+            query.setParameter("email", email);
+            query.setParameter("userName", userName);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

@@ -52,14 +52,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(UserData userData) throws Exception {
+    public void register(UserData userData) {
         try {
-            if (userData == null || userData.getPassword() == null || userData.getUserName() == null) {
-                throw new Exception("注册信息缺失");
-            }
             String username = userData.getUserName();
             String password = userData.getPassword();
-            userDao.addUser(username, password);
+            String email = userData.getEmail();
+            userDao.addUser(username, password,email);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -77,9 +75,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyInfo(UserData userData){
+    public void modifyPassword(String userName, String password) {
         try {
-            userDao.modifyInfo(userData.getUserName(), userData.getPassword(), userData.getOldName());
+            userDao.modifyPassword(userName, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void modifyEmail(String userName, String email) {
+        try {
+            userDao.modifyEmail(userName, email);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

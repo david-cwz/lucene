@@ -8,7 +8,8 @@ import java.util.Map;
 public interface UserDao {
     List<User> getUserList(Map<String, Object> map);
     List<User> getAllUserList();
-    void addUser(String username, String password);
+    void addUser(String userName, String password, String email);
     void delUser(String deleteName);
-    void modifyInfo(String username, String password, String oldName);
+    void modifyPassword(String userName, String password);
+    void modifyEmail(String userName, String email);
 }
