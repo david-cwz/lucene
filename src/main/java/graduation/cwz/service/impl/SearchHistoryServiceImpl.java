@@ -9,6 +9,7 @@ import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,21 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     SearchHistoryDao searchHistoryDao;
     @Autowired
     UserService userService;
+
+    @PostConstruct
+    public void runThread() {
+        Thread preEmbeddedThread = new Thread(() -> {
+            while (true) {
+                System.out.println("haha,");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        preEmbeddedThread.start();
+    }
 
     @Override
     public List<SearchHistory> getRecordList(Map<String, Object> map) {

@@ -215,7 +215,7 @@
                 用户列表</a> <a href="javascript:openPasswordModifyDialog()"
                              class="easyui-linkbutton"
                              data-options="plain:true,iconCls:'icon-modifyPassword'"
-                             style="width: 150px;"> 修改密码</a> <a href="javascript:logout()"
+                             style="width: 150px;"> 修改当前用户密码</a> <a href="javascript:logout()"
                                                                 class="easyui-linkbutton"
                                                                 data-options="plain:true,iconCls:'icon-exit'"
                                                                 style="width: 150px;">
