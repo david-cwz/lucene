@@ -34,7 +34,7 @@ public class SearchHistoryController {
         map.put("size", pageBean.getPageSize());
         map.put("userName", userName);
         List<SearchHistory> messageList = searchHistoryService.getRecordList(map);
-        int total = messageList.size();
+        int total = searchHistoryService.countRecordByName(userName);
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(messageList);
         result.put("rows", jsonArray);
@@ -90,13 +90,10 @@ public class SearchHistoryController {
      * 转换状态
      */
     @RequestMapping("/shiftStatus")
-    public String shiftStatus(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
+    public String shiftStatus(@RequestParam(value = "id") int id, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            String[] idListStr = idList.split(",");
-            for (int i = 0; i < idListStr.length; i++) {
-                searchHistoryService.shiftStatus(Integer.parseInt(idListStr[i]));
-            }
+            searchHistoryService.shiftStatus(id);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

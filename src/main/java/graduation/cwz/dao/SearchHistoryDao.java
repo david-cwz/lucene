@@ -9,7 +9,10 @@ import java.util.Map;
 public interface SearchHistoryDao {
     List<SearchHistory> getRecordList(Map<String, Object> map);
     List<SearchHistory> getAllRecordList();
+    List<SearchHistory> getAllRecordListByName(String userName);
+    List<SearchHistory> getPreEmbeddedRecords();
     void addRecord(String record, User user, String date);
     void delRecord(int deleteId);
-    void updateStatus(int id, boolean isisPreEmbedded);
+    void updatePreEmbeddedStatus(int id, boolean isisPreEmbedded);
+    void updateHaveNewResultStatus(int id, String haveNewResult);
 }

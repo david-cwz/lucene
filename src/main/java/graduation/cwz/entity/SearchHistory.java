@@ -21,7 +21,10 @@ public class SearchHistory {
     private String date;
 
     @Column(name = "isPreEmbedded")
-    private boolean isisPreEmbedded = true;
+    private boolean isPreEmbedded = false;
+
+    @Column(name = "haveNewResult")
+    private String haveNewResult;
 
     public SearchHistory() {}
 
@@ -63,11 +66,19 @@ public class SearchHistory {
         this.date = date;
     }
 
-    public boolean isIsisPreEmbedded() {
-        return isisPreEmbedded;
+    public boolean isPreEmbedded() {
+        return isPreEmbedded;
     }
 
-    public void setIsisPreEmbedded(boolean isisPreEmbedded) {
-        this.isisPreEmbedded = isisPreEmbedded;
+    public void setPreEmbedded(boolean preEmbedded) {
+        isPreEmbedded = preEmbedded;
+    }
+
+    public String getHaveNewResult() {
+        return haveNewResult;
+    }
+
+    public void setHaveNewResult(String haveNewResult) {
+        this.haveNewResult = haveNewResult;
     }
 }

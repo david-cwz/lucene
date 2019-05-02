@@ -36,4 +36,12 @@ public class SearchResultData {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "SearchResultData{" +
+                "id=" + id +
+                ", intro='" + intro + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

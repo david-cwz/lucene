@@ -4,6 +4,7 @@ import graduation.cwz.dao.MessageDao;
 import graduation.cwz.entity.Message;
 import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
+import graduation.cwz.service.SearchHistoryService;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
@@ -33,9 +34,6 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     MessageDao messageDao;
 
-    private static final String INDEX_PATH = "C:lucene\\index"; //lucene索引存放的本地位置
-
-
     @Override
     public List<Message> getMessageList(Map<String, Object> map) {
         try {
@@ -60,6 +58,10 @@ public class MessageServiceImpl implements MessageService {
     public void addMessage(String intro, String content) {
         try {
             messageDao.addMessage(intro, content);
+            synchronized (SearchHistoryServiceImpl.newMessageList) {
+                SearchHistoryServiceImpl.newMessageList.add(new Message(intro, content));
+                SearchHistoryServiceImpl.newMessageList.notify();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -81,18 +83,17 @@ public class MessageServiceImpl implements MessageService {
      * 创建索引
      */
     @Override
-    public void createIndex() {
+    public void createIndex(List<Message> messageList, String indexPath) {
 
         IndexWriter indexWriter = null;
         try
         {
-            Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(INDEX_PATH));
+            Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             Analyzer analyzer = new SmartChineseAnalyzer(true);
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
             indexWriter = new IndexWriter(directory, indexWriterConfig);
             indexWriter.deleteAll();// 清除以前的index
 
-            List<Message> messageList = getAllMessageList();
             for (Message message : messageList) {
                 Document document = new Document();
                 document.add(new Field("id", String.valueOf(message.getId()), TextField.TYPE_STORED));
@@ -116,13 +117,13 @@ public class MessageServiceImpl implements MessageService {
      * 搜索
      */
     @Override
-    public List<SearchResultData> search(String keyWord) {
+    public List<SearchResultData> search(String keyWord, String indexPath) {
         List<SearchResultData> resultList = new ArrayList<>();
         DirectoryReader directoryReader = null;
         try
         {
             // 1、创建Directory
-            Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(INDEX_PATH));
+            Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             // 2、创建IndexReader
             directoryReader = DirectoryReader.open(directory);
             // 3、根据IndexReader创建IndexSearch
@@ -142,10 +143,10 @@ public class MessageServiceImpl implements MessageService {
 
             // 5、根据searcher搜索并且返回TopDocs
             TopDocs topDocs = indexSearcher.search(multiFieldQuery, 100); // 搜索前100条结果
-            System.out.println("共找到匹配处：" + topDocs.totalHits);
+//            System.out.println("共找到匹配处：" + topDocs.totalHits);
             // 6、根据TopDocs获取ScoreDoc对象
             ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-            System.out.println("共找到匹配文档数：" + scoreDocs.length);
+//            System.out.println("共找到匹配文档数：" + scoreDocs.length);
 
             QueryScorer scorer = new QueryScorer(multiFieldQuery, "content");
             SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter("“", "”");
@@ -165,13 +166,13 @@ public class MessageServiceImpl implements MessageService {
                 //TokenSources.getTokenStream("content", tvFields, content, analyzer, 100);
                 //TokenStream tokenStream = TokenSources.getAnyTokenStream(indexSearcher.getIndexReader(), scoreDoc.doc, "content", document, analyzer);
                 //System.out.println(highlighter.getBestFragment(tokenStream, content));
-                System.out.println("-----------------------------------------");
-                System.out.println("文章id：" + id);
-                System.out.println("文章intro：");
-                System.out.println(_intro);
-                System.out.println("文章content：");
-                System.out.println(_content);
-                System.out.println("");
+//                System.out.println("-----------------------------------------");
+//                System.out.println("文章id：" + id);
+//                System.out.println("文章intro：");
+//                System.out.println(_intro);
+//                System.out.println("文章content：");
+//                System.out.println(_content);
+//                System.out.println("");
                 // 8、根据Document对象获取需要的值
             }
         } catch (Exception e) {
@@ -184,6 +185,16 @@ public class MessageServiceImpl implements MessageService {
             }
         }
         return resultList;
+    }
+
+    @Override
+    public int countMessage() {
+        try {
+            return getAllMessageList().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 }

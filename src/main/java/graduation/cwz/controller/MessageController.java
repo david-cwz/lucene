@@ -25,6 +25,9 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    public static final String INDEX_PATH = "C:\\lucene\\index"; //lucene索引存放的本地位置
+    public static final String INDEX_PATH2 = "C:\\lucene\\index2"; //lucene索引存放的本地位置
+
     @RequestMapping("/list")
     public String getMessageList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, HttpServletResponse response) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
@@ -32,7 +35,7 @@ public class MessageController {
         map.put("start", pageBean.getStart());
         map.put("size", pageBean.getPageSize());
         List<Message> messageList = messageService.getMessageList(map);
-        int total = messageList.size();
+        int total = messageService.countMessage();
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(messageList);
         result.put("rows", jsonArray);
@@ -82,7 +85,7 @@ public class MessageController {
     public String index(HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            messageService.createIndex();
+            messageService.createIndex(messageService.getAllMessageList(), INDEX_PATH);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +97,7 @@ public class MessageController {
 
     @RequestMapping("/search")
     public String search(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
-        List<SearchResultData> resultList = messageService.search(keyWord);
+        List<SearchResultData> resultList = messageService.search(keyWord, INDEX_PATH);
         int total = resultList.size();
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(resultList);

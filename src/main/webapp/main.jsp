@@ -126,7 +126,7 @@
                         }, function (result) {
                         }, "json");
 
-                        openTab(' 搜索结果','searchResult.jsp','icon-shujia');
+                        openTab(' “' + this.t1 + '”的搜索结果','searchResult.jsp','icon-shujia');
                         this.t1='';
                     },
                 }

@@ -14,4 +14,5 @@ public interface UserService {
     void modifyEmail(String userName, String email);
     String login(UserData userData);
     User getUserByName(String userName);
+    int countUser();
 }

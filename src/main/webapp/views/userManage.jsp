@@ -56,7 +56,7 @@
         function openEmailModifyDialog() {
             var selectedRows = $("#dg").datagrid('getSelections');
             if (selectedRows.length != 1) {
-                $.messager.alert("系统提示", "请选择“一”条要编辑的数据！");
+                $.messager.alert("系统提示", "请选择“1”条要编辑的数据！");
                 return;
             }
             var row = selectedRows[0];

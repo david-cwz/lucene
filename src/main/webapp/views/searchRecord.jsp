@@ -47,29 +47,43 @@
 
         }
 
-        function openRecordShiftDialog() {
+        function reSearchRecord() {
             var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length == 0) {
-                $.messager.alert("系统提示", "请选择要转换的记录！");
+            if (selectedRows.length !== 1) {
+                $.messager.alert("系统提示", "请选择“1”条要重新搜索的记录！");
                 return;
             }
-            var strIdList = [];
-            for (var i = 0; i < selectedRows.length; i++) {
-                strIdList.push(selectedRows[i].id);
+            var keyWord = selectedRows[0].record;
+            $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + keyWord, {
+            }, function (result) {
+            }, "json");
+
+            window.parent.openTab(' “${keyWord}”的搜索结果','searchResult.jsp','icon-shujia');
+        }
+
+        function openRecordShiftDialog() {
+            var selectedRows = $("#dg").datagrid('getSelections');
+            if (selectedRows.length !== 1) {
+                $.messager.alert("系统提示", "请选择“1”条要转换的记录！");
+                return;
             }
-            var idList = strIdList.join(",");
-            $.messager.confirm("系统提示", "您确认要转换这<font color=red>"
-                + selectedRows.length + "</font>条记录的预埋单状态吗？", function (r) {
+            var id = selectedRows[0].id;
+            $.messager.confirm("系统提示", "您确认要转换这条记录的预埋单状态吗？", function (r) {
                 if (r) {
                     $.post("${pageContext.request.contextPath}/record/shiftStatus.do", {
-                        idList: idList
+                        id: id
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "转换成功！");
-                            $("#dg").datagrid("reload");
+
+                            $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + selectedRows[0].record, {
+                            }, function (result) {
+                            }, "json");
                         } else {
                             $.messager.alert("系统提示", "转换失败！");
                         }
+                        window.parent.openTab(' “${keyWord}”的搜索结果','searchResult.jsp','icon-shujia');
+                        $("#dg").datagrid("reload");
                     }, "json");
                 }
             });
@@ -117,15 +131,18 @@
         <th field="id" width="50" align="center">编号</th>
         <th field="record" width="100" align="center">搜索内容</th>
         <th field="date" width="50" align="center">搜索日期</th>
-        <th field="isisPreEmbedded" width="150" align="center">是否预埋单</th>
+        <th field="preEmbedded" width="50" align="center">是否预埋单</th>
+        <th field="haveNewResult" width="100" align="center">是否有新结果（预埋单为true）</th>
     </tr>
     </thead>
 </table>
 <div id="tb">
     <div>
         <a href="javascript:openRecordShiftDialog()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">转换预埋单状态</a> <a
-            href="javascript:deleteRecord()" class="easyui-linkbutton"
+           iconCls="icon-add" plain="true">转换预埋单状态并重新搜索</a>
+        <a href="javascript:reSearchRecord()" class="easyui-linkbutton"
+           iconCls="icon-remove" plain="true">重新搜索此条记录</a>
+        <a href="javascript:deleteRecord()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>
 </div>

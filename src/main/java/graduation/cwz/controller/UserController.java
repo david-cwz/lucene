@@ -111,7 +111,7 @@ public class UserController {
         map.put("start", pageBean.getStart());
         map.put("size", pageBean.getPageSize());
         List<User> userList = userService.getUserList(map);
-        int total = userList.size();
+        int total = userService.countUser();
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(userList);
         result.put("rows", jsonArray);

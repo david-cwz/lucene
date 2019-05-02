@@ -52,6 +52,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int countUser() {
+        try {
+            return getAllUserList().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public void register(UserData userData) {
         try {
             String username = userData.getUserName();

@@ -1,15 +1,20 @@
 package graduation.cwz.service.impl;
 
+import graduation.cwz.controller.MessageController;
 import graduation.cwz.dao.SearchHistoryDao;
+import graduation.cwz.entity.Message;
 import graduation.cwz.entity.SearchHistory;
 import graduation.cwz.entity.User;
 import graduation.cwz.model.RecordData;
+import graduation.cwz.model.SearchResultData;
+import graduation.cwz.service.MessageService;
 import graduation.cwz.service.SearchHistoryService;
 import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,16 +24,31 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     SearchHistoryDao searchHistoryDao;
     @Autowired
     UserService userService;
+    @Autowired
+    MessageService messageService;
+
+    public static final List<Message> newMessageList = new LinkedList<>();  //新消息队列
 
     @PostConstruct
     public void runThread() {
         Thread preEmbeddedThread = new Thread(() -> {
             while (true) {
-                System.out.println("haha,");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (newMessageList) {
+                    try {
+                        while (newMessageList.size() == 0) {
+                            newMessageList.wait();
+                        }
+                        messageService.createIndex(newMessageList, MessageController.INDEX_PATH2); //创建索引
+                        List<SearchHistory> list = searchHistoryDao.getPreEmbeddedRecords();
+                        for (SearchHistory record : list) {
+                            List<SearchResultData> resultList = messageService.search(record.getRecord(), MessageController.INDEX_PATH2); //搜索
+                            if (resultList != null && resultList.size() > 0) {
+                                record.setHaveNewResult("have new result!!!");
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -49,6 +69,16 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     public List<SearchHistory> getAllRecordList() {
         try {
             return searchHistoryDao.getAllRecordList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<SearchHistory> getAllRecordListByName(String userName) {
+        try {
+            return searchHistoryDao.getAllRecordListByName(userName);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -82,10 +112,25 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
             List<SearchHistory> list = getAllRecordList();
             for (SearchHistory record : list) {
                 if (record.getId() == id) {
-                    searchHistoryDao.updateStatus(id, !record.isIsisPreEmbedded());
+                    if (record.isPreEmbedded()) { //预埋单true转换为false时
+                        searchHistoryDao.updateHaveNewResultStatus(id, "");
+                    } else{ //预埋单false转换为true时
+                        searchHistoryDao.updateHaveNewResultStatus(id, "no new results");
+                    }
+                    searchHistoryDao.updatePreEmbeddedStatus(id, !record.isPreEmbedded());
                     return;
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public int countRecordByName(String userName) {
+        try {
+            return getAllRecordListByName(userName).size();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

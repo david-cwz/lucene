@@ -52,6 +52,36 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
+    public List<SearchHistory> getAllRecordListByName(String userName) {
+        List<SearchHistory> list;
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from SearchHistory sh " +
+                    "where sh.user.userName=:userName");
+            query.setParameter("userName", userName);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public List<SearchHistory> getPreEmbeddedRecords() {
+        List<SearchHistory> list;
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from SearchHistory sh " +
+                    "where sh.isPreEmbedded=:isPreEmbedded");
+            query.setParameter("isPreEmbedded", true);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
     public void addRecord(String record, User user, String date) {
         try (Session session = sessionFactory.openSession()) {
             SearchHistory searchHistory = new SearchHistory(record, user, date);
@@ -80,12 +110,28 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
-    public void updateStatus(int id, boolean isisPreEmbedded) {
+    public void updatePreEmbeddedStatus(int id, boolean isPreEmbedded) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update SearchHistory sh set sh.isisPreEmbedded=:isisPreEmbedded " +
+            Query query = session.createQuery("update SearchHistory sh set sh.isPreEmbedded=:isPreEmbedded " +
                     "where sh.id=:id");
-            query.setParameter("isisPreEmbedded", isisPreEmbedded);
+            query.setParameter("isPreEmbedded", isPreEmbedded);
+            query.setParameter("id", id);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateHaveNewResultStatus(int id, String haveNewResult) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update SearchHistory sh set sh.haveNewResult=:haveNewResult " +
+                    "where sh.id=:id");
+            query.setParameter("haveNewResult", haveNewResult);
             query.setParameter("id", id);
             query.executeUpdate();
             transaction.commit();
