@@ -87,13 +87,31 @@ public class SearchHistoryController {
     }
 
     /**
-     * 转换状态
+     * 转换预埋单状态
      */
     @RequestMapping("/shiftStatus")
     public String shiftStatus(@RequestParam(value = "id") int id, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            searchHistoryService.shiftStatus(id);
+            searchHistoryService.shiftPreEmbeddedStatus(id);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    /**
+     * 更新是否有新结果的状态
+     */
+    @RequestMapping("/updateStatus")
+    public String updateHaveNewResultStatus(@RequestParam(value = "id") int id, @RequestParam(value = "haveNewResult") String haveNewResult,
+                                            HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            searchHistoryService.updateHaveNewResultStatus(id, haveNewResult);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

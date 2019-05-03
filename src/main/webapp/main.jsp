@@ -202,10 +202,10 @@
         <div title="信息管理" data-options="iconCls:'icon-shuji'"
              style="padding:10px">
             <a
-                    href="javascript:openTab(' 全部信息','messageManage.jsp','icon-shuben')"
+                    href="javascript:openTab(' 信息管理','messageManage.jsp','icon-shuben')"
                     class="easyui-linkbutton"
                     data-options="plain:true,iconCls:'icon-shuben'"
-                    style="width: 150px;">全部信息</a>
+                    style="width: 150px;">信息管理</a>
         </div>
         <div title="系统管理" data-options="iconCls:'icon-item'"
              style="padding:10px;border:none;">

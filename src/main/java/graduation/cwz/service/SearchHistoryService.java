@@ -12,6 +12,7 @@ public interface SearchHistoryService {
     List<SearchHistory> getAllRecordListByName(String userName);
     void addRecord(RecordData recordData);
     void delRecord(int deleteId);
-    void shiftStatus(int id);
+    void shiftPreEmbeddedStatus(int id);
     int countRecordByName(String userName);
+    void updateHaveNewResultStatus(int id, String haveNewResult);
 }

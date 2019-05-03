@@ -58,7 +58,13 @@
             }, function (result) {
             }, "json");
 
-            window.parent.openTab(' “${keyWord}”的搜索结果','searchResult.jsp','icon-shujia');
+            $.post("${pageContext.request.contextPath}/record/updateStatus.do?id=" + selectedRows[0].id + "&haveNewResult=no%20new%20results", {
+            }, function (result) {
+            }, "json");
+
+            $("#dg").datagrid("reload");
+
+            window.parent.openTab(' “' + keyWord + '”的搜索结果','searchResult.jsp','icon-shujia');
         }
 
         function openRecordShiftDialog() {
@@ -82,7 +88,7 @@
                         } else {
                             $.messager.alert("系统提示", "转换失败！");
                         }
-                        window.parent.openTab(' “${keyWord}”的搜索结果','searchResult.jsp','icon-shujia');
+                        // window.parent.openTab(' “' + selectedRows[0].record + '”的搜索结果','searchResult.jsp','icon-shujia');
                         $("#dg").datagrid("reload");
                     }, "json");
                 }
@@ -139,7 +145,7 @@
 <div id="tb">
     <div>
         <a href="javascript:openRecordShiftDialog()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">转换预埋单状态并重新搜索</a>
+           iconCls="icon-add" plain="true">转换预埋单状态</a>
         <a href="javascript:reSearchRecord()" class="easyui-linkbutton"
            iconCls="icon-remove" plain="true">重新搜索此条记录</a>
         <a href="javascript:deleteRecord()" class="easyui-linkbutton"

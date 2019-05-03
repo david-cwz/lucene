@@ -10,6 +10,7 @@ import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
 import graduation.cwz.service.SearchHistoryService;
 import graduation.cwz.service.UserService;
+import graduation.cwz.utils.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,10 +44,12 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
                         for (SearchHistory record : list) {
                             List<SearchResultData> resultList = messageService.search(record.getRecord(), MessageController.INDEX_PATH2); //搜索
                             if (resultList != null && resultList.size() > 0) {
-                                record.setHaveNewResult("have new result!!!");
+                                searchHistoryDao.updateHaveNewResultStatus(record.getId(), "have new result!!!");
+                                EmailUtil.sendEmail(record.getUser().getEmail(), record.getUser().getUserName(), record.getRecord());
                             }
                         }
-                    } catch (InterruptedException e) {
+                        newMessageList.clear();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -107,7 +110,7 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     }
 
     @Override
-    public void shiftStatus(int id) {
+    public void shiftPreEmbeddedStatus(int id) {
         try {
             List<SearchHistory> list = getAllRecordList();
             for (SearchHistory record : list) {
@@ -136,4 +139,21 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
             throw e;
         }
     }
+
+    @Override
+    public void updateHaveNewResultStatus(int id, String haveNewResult) {
+        try {
+            List<SearchHistory> list = getAllRecordList();
+            for (SearchHistory record : list) {
+                if (record.getId() == id) {
+                    searchHistoryDao.updateHaveNewResultStatus(id, haveNewResult);
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }
