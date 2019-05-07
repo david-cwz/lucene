@@ -145,9 +145,9 @@
 <div id="tb">
     <div>
         <a href="javascript:openRecordShiftDialog()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">转换预埋单状态</a>
+           iconCls="icon-edit" plain="true">转换预埋单状态</a>
         <a href="javascript:reSearchRecord()" class="easyui-linkbutton"
-           iconCls="icon-remove" plain="true">重新搜索此条记录</a>
+           iconCls="icon-edit" plain="true">重新搜索此条记录</a>
         <a href="javascript:deleteRecord()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>
