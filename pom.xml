@@ -101,9 +101,10 @@
 
         <!-- https://mvnrepository.com/artifact/c3p0/c3p0 -->
         <dependency>
-            <groupId>c3p0</groupId>
+            <!--<groupId>c3p0</groupId>-->
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
+            <version>0.9.5.2</version>
         </dependency>
 
 
@@ -220,6 +221,13 @@
             <version>1.4.7</version>
         </dependency>
         <!-- 邮件end -->
+
+        <dependency> <!-- jsoup HTML parser library @ https://jsoup.org/ -->
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.11.2</version>
+        </dependency>
+
 
     </dependencies>
     <build>

@@ -64,7 +64,15 @@
 
             $("#dg").datagrid("reload");
 
-            window.parent.openTab(' “' + keyWord + '”的搜索结果','searchResult.jsp','icon-shujia');
+            if (selectedRows[0].searchTarget === "本系统") {
+                window.parent.openTab(' “' + keyWord + '”的系统搜索结果','searchResult.jsp','icon-shujia');
+            } else {
+                $.post("${pageContext.request.contextPath}/message/indexOnline.do", {
+                    url:selectedRows[0].searchTarget
+                }, function (result) {
+                }, "json");
+                window.parent.openTab(' “' + keyWord + '”的网页搜索结果','searchOnlineResult.jsp','icon-shujia');
+            }
         }
 
         function openRecordShiftDialog() {
@@ -138,7 +146,8 @@
         <th field="record" width="100" align="center">搜索内容</th>
         <th field="date" width="50" align="center">搜索日期</th>
         <th field="preEmbedded" width="50" align="center">是否预埋单</th>
-        <th field="haveNewResult" width="100" align="center">是否有新结果（预埋单为true）</th>
+        <th field="haveNewResult" width="50" align="center">是否有新结果（预埋单为true）</th>
+        <th field="searchTarget" width="100" align="center">搜索目标</th>
     </tr>
     </thead>
 </table>

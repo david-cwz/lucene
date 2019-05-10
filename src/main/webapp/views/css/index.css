@@ -45,8 +45,8 @@ section input{
         outline: none;
 }
 section input[type=text]{
-        width: 40em;
-        padding-left: 0.5em;
+        width: 100px;
+        border: 1px
 }
 section input[type=button]{
         background-color: blue;
@@ -55,8 +55,8 @@ section input[type=button]{
         color: white;
 }
 section .center,.center_left,.center_right{display: inline-block;}
-.center_left{border: 1px solid gray;border-right: 0px;float: left;height: 28px;line-height: 28px;}
-.center_right{float: left;height: 28px;border: 1px solid blue;border-left: 0px;}
+.center_left{border: 1px solid gray;float: left;height: 28px;line-height: 28px;}
+.center_right{float: left;height: 28px;border: 1px solid blue;}
 section img{margin-bottom: 2em;}
 footer{font-size: 12px;margin-top: 15%}
 .footerItem{width: 602px;margin: 0 auto;}
@@ -67,7 +67,7 @@ footer{font-size: 12px;margin-top: 15%}
 .settings{position: relative}
 .settings:hover .setbox{display: block;}
 .setbox{border: 1px solid gray;position: absolute;top: 2.5em;left: 50%;margin-left: -2.5em;display: none;
-box-shadow: 5px 0 20px gray;}
+        box-shadow: 5px 0 20px gray;}
 .setItem{position: relative;z-index:3;}
 .setItem li{float: none;width: 5em;text-align: center;margin: 0px}
 .setItem li:hover{background-color: blue;color: white;cursor: pointer;}
@@ -107,31 +107,18 @@ box-shadow: 5px 0 20px gray;}
 .baidutuiguang{width: 38px;height: 41px;background-position: -220px 0px;}
 #more .imgItem:last-child{text-decoration: underline;}
 #backgroundColor{position:fixed;width:100%;height:100%;left:0px;top:0px;background-color: gray;opacity: 0.5;display: none}
-#loginForm{position:fixed;left:50%;top:50%;width:260px;height:310px;background-color: white;
-        border: 1px solid black;margin: -176px 0 0 -151px;padding: 20px 20px;display: none;}
-#loginForm div{margin: 2em 0;}
-#loginForm input[type=button]{border: none;outline: none;color:white;background-color: black;
-        width:100%;height: 3em;border-radius: 5px;}
-#loginForm input[type=button]:hover{cursor: pointer;background-color: gray;}
-
-#registerForm{position:fixed;left:50%;top:50%;width:260px;height:310px;background-color: white;
-    border: 1px solid black;margin: -176px 0 0 -151px;padding: 20px 20px;display: none;}
-#registerForm div{margin: 2em 0;}
-#registerForm input[type=button]{border: none;outline: none;color:white;background-color: black;
-    width:100%;height: 3em;border-radius: 5px;}
-#registerForm input[type=button]:hover{cursor: pointer;background-color: gray;}
 
 #close{position: absolute;right:5px;top:5px;background-color: red;color: white;border-radius: 20px;
-width:1em;height:1em;text-align: center;line-height: 0.8em;font-size: 1.5em;}
+        width:1em;height:1em;text-align: center;line-height: 0.8em;font-size: 1.5em;}
 #close:hover{cursor: pointer;background-color: gray;}
 #close_r{position: absolute;right:5px;top:5px;background-color: red;color: white;border-radius: 20px;
-    width:1em;height:1em;text-align: center;line-height: 0.8em;font-size: 1.5em;}
+        width:1em;height:1em;text-align: center;line-height: 0.8em;font-size: 1.5em;}
 #close_r:hover{cursor: pointer;background-color: gray;}
 
 #box ul{border: 1px solid gainsboro;border-top: 1px solid transparent;}
 #box li {
         cursor: pointer;
-text-align: left}
+        text-align: left}
 #box li:hover {
         background: #ccc; }
 .gray {

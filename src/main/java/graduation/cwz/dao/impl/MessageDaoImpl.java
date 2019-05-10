@@ -23,7 +23,7 @@ public class MessageDaoImpl implements MessageDao {
         int start = (Integer) map.get("start");
         int size = (Integer) map.get("size");
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from Message m ");
+            Query query = session.createQuery("from Message m order by id desc");
             query.setFirstResult(start);
             query.setMaxResults(size);
             list = query.list();

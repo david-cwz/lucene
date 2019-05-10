@@ -27,6 +27,7 @@ public class MessageController {
 
     public static final String INDEX_PATH = "C:\\lucene\\index"; //lucene索引存放的本地位置
     public static final String INDEX_PATH2 = "C:\\lucene\\index2"; //lucene索引存放的本地位置
+    public static final String ONLINE_INDEX_PATH = "C:\\lucene\\online_index"; //lucene网页搜索索引存放的本地位置
 
     @RequestMapping("/list")
     public String getMessageList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, HttpServletResponse response) throws Exception {
@@ -95,9 +96,35 @@ public class MessageController {
         return null;
     }
 
+    @RequestMapping("/indexOnline")
+    public String indexOnline(String url, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            messageService.createOnlineIndex(url, ONLINE_INDEX_PATH);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
     @RequestMapping("/search")
     public String search(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
         List<SearchResultData> resultList = messageService.search(keyWord, INDEX_PATH);
+        int total = resultList.size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(resultList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/searchOnline")
+    public String searchOnline(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
+        List<SearchResultData> resultList = messageService.searchOnline(keyWord, ONLINE_INDEX_PATH);
         int total = resultList.size();
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(resultList);

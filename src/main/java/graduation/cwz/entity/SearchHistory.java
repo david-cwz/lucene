@@ -26,12 +26,23 @@ public class SearchHistory {
     @Column(name = "haveNewResult")
     private String haveNewResult;
 
+    @Lob
+    @Column(name = "searchTarget", columnDefinition="TEXT", nullable=true)
+    private String searchTarget;
+
     public SearchHistory() {}
 
     public SearchHistory(String record, User user, String date) {
         this.record = record;
         this.user = user;
         this.date = date;
+    }
+
+    public SearchHistory(String record, User user, String date, String searchTarget) {
+        this.record = record;
+        this.user = user;
+        this.date = date;
+        this.searchTarget = searchTarget;
     }
 
     public int getId() {
@@ -80,5 +91,13 @@ public class SearchHistory {
 
     public void setHaveNewResult(String haveNewResult) {
         this.haveNewResult = haveNewResult;
+    }
+
+    public String getSearchTarget() {
+        return searchTarget;
+    }
+
+    public void setSearchTarget(String searchTarget) {
+        this.searchTarget = searchTarget;
     }
 }

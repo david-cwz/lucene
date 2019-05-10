@@ -92,7 +92,7 @@ public class SearchHistoryServiceImpl implements SearchHistoryService {
     public void addRecord(RecordData recordData) {
         try {
             User user = userService.getUserByName(recordData.getUserName());
-            searchHistoryDao.addRecord(recordData.getRecord(), user, recordData.getDate());
+            searchHistoryDao.addRecord(recordData.getRecord(), user, recordData.getDate(), recordData.getSearchTarget());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

@@ -11,7 +11,7 @@ public interface SearchHistoryDao {
     List<SearchHistory> getAllRecordList();
     List<SearchHistory> getAllRecordListByName(String userName);
     List<SearchHistory> getPreEmbeddedRecords();
-    void addRecord(String record, User user, String date);
+    void addRecord(String record, User user, String date, String searchTarget);
     void delRecord(int deleteId);
     void updatePreEmbeddedStatus(int id, boolean isisPreEmbedded);
     void updateHaveNewResultStatus(int id, String haveNewResult);

@@ -17,14 +17,12 @@
             src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 </head>
 <body style="margin:1px;">
-<table id="dg" title="“${keyWord}”的系统搜索结果" class="easyui-datagrid" fitColumns="true"
+<table id="dg" title="“${keyWord}”的网页搜索结果" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/message/search.do?keyWord=${keyWord}" fit="true"
+       url="${pageContext.request.contextPath}/message/searchOnline.do?keyWord=${keyWord}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>
-        <th field="id" width="50" align="center">结果所在编号</th>
-        <th field="intro" width="100" align="center">简介</th>
         <th field="content" width="150" align="center">内容匹配</th>
     </tr>
     </thead>

@@ -26,7 +26,7 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
         String userName = (String)map.get("userName");
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from SearchHistory sh " +
-                    "where sh.user.userName=:userName");
+                    "where sh.user.userName=:userName order by date desc");
             query.setParameter("userName", userName);
             query.setFirstResult(start);
             query.setMaxResults(size);
@@ -82,9 +82,9 @@ public class SearchHistoryDaoImpl implements SearchHistoryDao {
     }
 
     @Override
-    public void addRecord(String record, User user, String date) {
+    public void addRecord(String record, User user, String date, String searchTarget) {
         try (Session session = sessionFactory.openSession()) {
-            SearchHistory searchHistory = new SearchHistory(record, user, date);
+            SearchHistory searchHistory = new SearchHistory(record, user, date, searchTarget);
             Transaction transaction = session.beginTransaction();
             session.save(searchHistory);
             transaction.commit();

@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>ssm-demo系统主页</title>
+    <title>预埋单搜索匹配系统主页</title>
     <link rel="stylesheet" type="text/css"
           href="${pageContext.request.contextPath}/jquery-easyui-1.3.3/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css"
@@ -30,7 +30,7 @@
         var url;
         function addTab(url, text, iconCls) {
             var content = "<iframe frameborder=0 scrolling='auto' style='width:100%;height:100%' src='${pageContext.request.contextPath}/views/"
-                    + url + "'></iframe>";
+                + url + "'></iframe>";
             $("#tabs").tabs("add", {
                 title: text,
                 iconCls: iconCls,
@@ -95,14 +95,14 @@
 
         function logout() {
             $.messager
-                    .confirm(
-                            "系统提示",
-                            "您确定要退出系统吗",
-                            function (r) {
-                                if (r) {
-                                    window.location.href = "${pageContext.request.contextPath}/user/logout.do";
-                                }
-                            });
+                .confirm(
+                    "系统提示",
+                    "您确定要退出系统吗",
+                    function (r) {
+                        if (r) {
+                            window.location.href = "${pageContext.request.contextPath}/user/logout.do";
+                        }
+                    });
         }
 
         window.onload=function(){
@@ -111,6 +111,7 @@
                 data:{
                     myData:[],
                     t1:'',
+                    t2:'',
                     now:-1,
                     isShow:true,
                 },
@@ -122,11 +123,32 @@
 
                         $.post("${pageContext.request.contextPath}/record/add.do", {
                             record:this.t1,
-                            userName:"${currentUser.userName}"
+                            userName:"${currentUser.userName}",
+                            searchTarget:"本系统",
                         }, function (result) {
                         }, "json");
 
-                        openTab(' “' + this.t1 + '”的搜索结果','searchResult.jsp','icon-shujia');
+                        openTab(' “' + this.t1 + '”的系统搜索结果','searchResult.jsp','icon-shujia');
+                        this.t1='';
+                    },
+                    searchOnline:function(){
+                        $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + this.t1, {
+                        }, function (result) {
+                        }, "json");
+
+                        $.post("${pageContext.request.contextPath}/record/add.do", {
+                            record:this.t1,
+                            userName:"${currentUser.userName}",
+                            searchTarget:this.t2
+                        }, function (result) {
+                        }, "json");
+
+                        $.post("${pageContext.request.contextPath}/message/indexOnline.do", {
+                            url:this.t2
+                        }, function (result) {
+                        }, "json");
+
+                        openTab(' “' + this.t1 + '”的网页搜索结果','searchOnlineResult.jsp','icon-shujia');
                         this.t1='';
                     },
                 }
@@ -159,19 +181,37 @@
                 <img src="views/img/title.PNG" alt="未加载成功">
                 <div id="box" >
                     <sapn class="center">
-                <span class="center_left">
-                    <input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" value="请输入你想要搜索的关键字" onfocus="clearText(this)">
-                    <ul id="boxUl" v-if="isShow">
-                        <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
-                            <!--{{value}}-->
-                        </li>
-                    </ul>
-                </span>
-                        <span class="center_right">
-                    <input type="button" value="搜索" @click="search()">
-                </span>
+                        <span>请输入搜索内容：</span>
+                        <span>
+                             <input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">
+                             <ul id="boxUl" v-if="isShow">
+                                 <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
+                                     <!--{{value}}-->
+                                 </li>
+                             </ul>
+                         </span>
                     </sapn>
-
+                    <br>
+                    <br>
+                    <sapn class="center">
+                        <span>请输入搜索网址：</span>
+                        <span >
+                             <input id="input2" type="text" v-model="t2" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">
+                             <ul id="boxUl2" v-if="isShow">
+                                 <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
+                                     <!--{{value}}-->
+                                 </li>
+                             </ul>
+                         </span>
+                    </sapn>
+                    <br>
+                    <br>
+                    <span class="center">
+                            <input type="button" value="在系统中搜索" @click="search()">
+                        </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="center">
+                            <input type="button" value="在网页中搜索" @click="searchOnline()">
+                        </span>
                 </div>
             </section>
 
@@ -213,12 +253,12 @@
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-lxr'" style="width: 150px;">
                 用户列表</a> <a href="javascript:openPasswordModifyDialog()"
-                             class="easyui-linkbutton"
-                             data-options="plain:true,iconCls:'icon-modifyPassword'"
-                             style="width: 150px;"> 修改当前用户密码</a> <a href="javascript:logout()"
-                                                                class="easyui-linkbutton"
-                                                                data-options="plain:true,iconCls:'icon-exit'"
-                                                                style="width: 150px;">
+                            class="easyui-linkbutton"
+                            data-options="plain:true,iconCls:'icon-modifyPassword'"
+                            style="width: 150px;"> 修改当前用户密码</a> <a href="javascript:logout()"
+                                                                   class="easyui-linkbutton"
+                                                                   data-options="plain:true,iconCls:'icon-exit'"
+                                                                   style="width: 150px;">
             安全退出</a>
         </div>
     </div>

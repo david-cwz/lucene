@@ -24,7 +24,7 @@ public class UserDaoImpl implements UserDao {
         int start = (Integer) map.get("start");
         int size = (Integer) map.get("size");
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from User");
+            Query query = session.createQuery("from User order by userName");
             query.setFirstResult(start);
             query.setMaxResults(size);
             list = query.list();
