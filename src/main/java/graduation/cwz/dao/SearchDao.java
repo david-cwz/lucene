@@ -6,7 +6,7 @@ import graduation.cwz.entity.User;
 import java.util.List;
 import java.util.Map;
 
-public interface SearchHistoryDao {
+public interface SearchDao {
     List<SearchHistory> getRecordList(Map<String, Object> map);
     List<SearchHistory> getAllRecordList();
     List<SearchHistory> getAllRecordListByName(String userName);

@@ -3,14 +3,14 @@ package graduation.cwz.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "search_history")
+@Table(name = "searchHistory")
 public class SearchHistory {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "recordId")
     private int id;
 
-    @Column(name = "records")
+    @Column(name = "record")
     private String record;
 
     @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)//cascade规定了级联操作，ALL包括添加、修改、删除操作

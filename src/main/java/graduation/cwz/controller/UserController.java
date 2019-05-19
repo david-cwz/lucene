@@ -4,13 +4,9 @@ import graduation.cwz.entity.User;
 import graduation.cwz.model.PageBean;
 import graduation.cwz.model.UserData;
 import graduation.cwz.service.UserService;
-import graduation.cwz.utils.JSONUtil;
-import graduation.cwz.utils.MD5Util;
 import graduation.cwz.utils.ResponseUtil;
-import graduation.cwz.utils.StringUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +17,6 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/user")

@@ -11,9 +11,5 @@ public interface MessageService {
     List<Message> getAllMessageList();
     void addMessage(String intro, String content);
     void delMessage(int deleteId);
-    void createIndex(List<Message> messageList, String indexPath);
-    void createOnlineIndex(String url, String indexPath);
-    List<SearchResultData> search(String keyWord, String indexPath);
-    List<SearchResultData> searchOnline(String keyWord, String indexPath);
     int countMessage();
 }

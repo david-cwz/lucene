@@ -1,6 +1,6 @@
 package graduation.cwz.dao.impl;
 
-import graduation.cwz.dao.SearchHistoryDao;
+import graduation.cwz.dao.SearchDao;
 import graduation.cwz.entity.SearchHistory;
 import graduation.cwz.entity.User;
 import org.hibernate.Query;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class SearchHistoryDaoImpl implements SearchHistoryDao {
+public class SearchDaoImpl implements SearchDao {
     @Autowired
     private SessionFactory sessionFactory;
 

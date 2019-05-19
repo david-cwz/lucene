@@ -32,7 +32,6 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw e;
         }
-
         return list;
     }
 
@@ -46,14 +45,13 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw e;
         }
-
         return list;
     }
 
     @Override
-    public void addUser(String username, String password, String email) {
+    public void addUser(String username, String password, String email, String role) {
         try (Session session = sessionFactory.openSession()) {
-            User user = new User(username, password, email);
+            User user = new User(username, password, email, role);
             Transaction transaction = session.beginTransaction();
             session.save(user);
             transaction.commit();
@@ -61,7 +59,6 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     @Override

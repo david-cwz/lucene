@@ -67,7 +67,8 @@ public class UserServiceImpl implements UserService {
             String username = userData.getUserName();
             String password = userData.getPassword();
             String email = userData.getEmail();
-            userDao.addUser(username, password,email);
+            String role = userData.getRole();
+            userDao.addUser(username, password,email, role);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
