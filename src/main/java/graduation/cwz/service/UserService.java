@@ -15,4 +15,5 @@ public interface UserService {
     String login(UserData userData);
     User getUserByName(String userName);
     int countUser();
+    void changeToSystem(String userName); //将用户权限升为管理员
 }

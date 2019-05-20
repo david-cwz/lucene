@@ -1,23 +1,18 @@
 package graduation.cwz.model;
 
 public class SearchResultData {
-    private int id;
     private String intro;
     private String content;
+    private int messageId;
+    private int recordId;
 
     public SearchResultData() {}
-    public SearchResultData(int id, String intro, String content) {
-        this.id = id;
+
+    public SearchResultData(String intro, String content, int messageId, int recordId) {
         this.intro = intro;
         this.content = content;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.messageId = messageId;
+        this.recordId = recordId;
     }
 
     public String getIntro() {
@@ -36,12 +31,19 @@ public class SearchResultData {
         this.content = content;
     }
 
-    @Override
-    public String toString() {
-        return "SearchResultData{" +
-                "id=" + id +
-                ", intro='" + intro + '\'' +
-                ", content='" + content + '\'' +
-                '}';
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
+    }
+
+    public int getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(int recordId) {
+        this.recordId = recordId;
     }
 }

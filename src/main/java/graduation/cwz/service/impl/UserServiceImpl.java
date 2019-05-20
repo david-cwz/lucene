@@ -62,6 +62,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void changeToSystem(String userName) {
+        try {
+            userDao.changeToSystem(userName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public void register(UserData userData) {
         try {
             String username = userData.getUserName();

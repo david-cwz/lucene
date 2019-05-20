@@ -8,6 +8,6 @@ import java.util.Map;
 public interface MessageDao {
     List<Message> getMessageList(Map<String, Object> map);
     List<Message> getAllMessageList();
-    void addMessage(String intro, String content);
+    void addMessage(Message message);
     void delMessage(int deleteId);
 }

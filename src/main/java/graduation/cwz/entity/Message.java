@@ -30,11 +30,6 @@ public class Message {
 
     public Message() {}
 
-    public Message(String intro, String content) {
-        this.intro = intro;
-        this.content = content;
-    }
-
     public Message(String intro, String content, User user, String email, String date) {
         this.intro = intro;
         this.content = content;

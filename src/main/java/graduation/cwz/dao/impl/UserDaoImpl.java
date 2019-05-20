@@ -107,4 +107,19 @@ public class UserDaoImpl implements UserDao {
             throw e;
         }
     }
+
+    @Override
+    public void changeToSystem(String userName) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update User u set u.role='system' " +
+                    "where u.userName=:userName");
+            query.setParameter("userName", userName);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

@@ -1,11 +1,11 @@
 package graduation.cwz.service.impl;
 
 import graduation.cwz.dao.SearchDao;
-import graduation.cwz.entity.Message;
-import graduation.cwz.entity.SearchHistory;
-import graduation.cwz.entity.User;
+import graduation.cwz.entity.*;
+import graduation.cwz.model.OnlineSearchResultData;
 import graduation.cwz.model.RecordData;
 import graduation.cwz.model.SearchResultData;
+import graduation.cwz.model.UrlData;
 import graduation.cwz.service.MessageService;
 import graduation.cwz.service.SearchService;
 import graduation.cwz.service.UserService;
@@ -192,7 +192,7 @@ public class SearchServiceImpl implements SearchService {
 
             for (Message message : messageList) {
                 Document document = new Document();
-                document.add(new Field("id", String.valueOf(message.getId()), TextField.TYPE_STORED));
+                document.add(new Field("messageId", String.valueOf(message.getId()), TextField.TYPE_STORED));
                 document.add(new Field("intro", message.getIntro(), TextField.TYPE_STORED));
                 document.add(new Field("content", message.getContent(), TextField.TYPE_STORED));
                 indexWriter.addDocument(document);
@@ -280,16 +280,16 @@ public class SearchServiceImpl implements SearchService {
             for (ScoreDoc scoreDoc : scoreDocs) {
                 // 7、根据searcher和ScoreDoc对象获取具体的Document对象
                 Document document = indexSearcher.doc(scoreDoc.doc);
-                String id = document.get("id");
+                String messageId = document.get("messageId");
                 String intro = document.get("intro");
                 String content = document.get("content");
                 String _intro = highlighter.getBestFragment(analyzer, "intro", intro);
                 String _content = highlighter.getBestFragment(analyzer, "content", content);
                 SearchResultData result;
                 if (_intro == null || "".equals(_intro)) {
-                    result = new SearchResultData(Integer.valueOf(id), intro, _content);
+                    result = new SearchResultData(Integer.valueOf(messageId), intro, _content);
                 } else {
-                    result = new SearchResultData(Integer.valueOf(id), _intro, _content);
+                    result = new SearchResultData(Integer.valueOf(messageId), _intro, _content);
                 }
                 resultList.add(result);
             }
@@ -360,6 +360,104 @@ public class SearchServiceImpl implements SearchService {
             }
         }
         return results;
+    }
+
+    @Override
+    public List<SearchResult> getSearchResultList(Map<String, Object> map) {
+        try {
+            return searchDao.getSearchResultList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public SearchHistory getRecordById(int recordId) {
+        try {
+            List<SearchHistory> list = getAllRecordList();
+            for (SearchHistory record : list) {
+                if (recordId == record.getId()) {
+                    return record;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
+    }
+
+    @Override
+    public void addSearchResult(SearchResultData searchResultData) {
+        try {
+            SearchHistory record = getRecordById(searchResultData.getRecordId());
+            Message message = messageService.getMessageById(searchResultData.getMessageId());
+            searchDao.addSearchResult(record, message, searchResultData.getIntro(), searchResultData.getContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map) {
+        try {
+            return searchDao.getOnlineSearchResultList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void addOnlineSearchResult(OnlineSearchResultData onlineSearchResultData) {
+        try {
+            SearchHistory record = getRecordById(onlineSearchResultData.getRecordId());
+            searchDao.addOnlineSearchResult(record, onlineSearchResultData.getContent(), onlineSearchResultData.getUrl());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Url> getUrlList(Map<String, Object> map) {
+        try {
+            return searchDao.getUrlList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void addUrl(UrlData urlData) {
+        try {
+            searchDao.addUrl(urlData.getName(), urlData.getUrl());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void modifyUrl(int urlId, UrlData urlData) {
+        try {
+            searchDao.modifyUrl(urlId, urlData.getName(), urlData.getUrl());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void delUrl(int urlId) {
+        try {
+            searchDao.delUrl(urlId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 }

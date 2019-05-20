@@ -1,8 +1,7 @@
 package graduation.cwz.dao.impl;
 
 import graduation.cwz.dao.SearchDao;
-import graduation.cwz.entity.SearchHistory;
-import graduation.cwz.entity.User;
+import graduation.cwz.entity.*;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -133,6 +132,134 @@ public class SearchDaoImpl implements SearchDao {
                     "where sh.id=:id");
             query.setParameter("haveNewResult", haveNewResult);
             query.setParameter("id", id);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<SearchResult> getSearchResultList(Map<String, Object> map) {
+        List<SearchResult> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        int recordId = (int)map.get("recordId");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from SearchResult sr " +
+                    "where sr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public void addSearchResult(SearchHistory record, Message message, String intro, String content) {
+        try (Session session = sessionFactory.openSession()) {
+            SearchResult searchResult = new SearchResult(record, message, intro, content);
+            Transaction transaction = session.beginTransaction();
+            session.save(searchResult);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map) {
+        List<OnlineSearchResult> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        int recordId = (int)map.get("recordId");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from OnlineSearchResult osr " +
+                    "where osr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public void addOnlineSearchResult(SearchHistory record, String content, String url) {
+        try (Session session = sessionFactory.openSession()) {
+            OnlineSearchResult onlineSearchResult = new OnlineSearchResult(record, content, url);
+            Transaction transaction = session.beginTransaction();
+            session.save(onlineSearchResult);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Url> getUrlList(Map<String, Object> map) {
+        List<Url> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from Url");
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public void addUrl(String name, String url) {
+        try (Session session = sessionFactory.openSession()) {
+            Url URL = new Url(name, url);
+            Transaction transaction = session.beginTransaction();
+            session.save(URL);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void modifyUrl(int urlId, String name, String url) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update Url u set u.name=:name,u.url=:url " +
+                    "where u.id=:urlId");
+            query.setParameter("name", name);
+            query.setParameter("url", url);
+            query.setParameter("urlId", urlId);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void delUrl(int urlId) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("delete from Url u " +
+                    "where u.id=:urlId");
+            query.setParameter("urlId", urlId);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

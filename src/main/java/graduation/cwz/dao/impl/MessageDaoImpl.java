@@ -2,6 +2,7 @@ package graduation.cwz.dao.impl;
 
 import graduation.cwz.dao.MessageDao;
 import graduation.cwz.entity.Message;
+import graduation.cwz.entity.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,9 +49,8 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public void addMessage(String intro, String content) {
+    public void addMessage(Message message) {
         try (Session session = sessionFactory.openSession()) {
-            Message message = new Message(intro, content);
             Transaction transaction = session.beginTransaction();
             session.save(message);
             transaction.commit();

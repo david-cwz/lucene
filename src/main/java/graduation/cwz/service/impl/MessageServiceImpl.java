@@ -2,7 +2,10 @@ package graduation.cwz.service.impl;
 
 import graduation.cwz.dao.MessageDao;
 import graduation.cwz.entity.Message;
+import graduation.cwz.entity.User;
+import graduation.cwz.model.MessageData;
 import graduation.cwz.service.MessageService;
+import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,8 @@ import java.util.Map;
 public class MessageServiceImpl implements MessageService {
     @Autowired
     MessageDao messageDao;
+    @Autowired
+    UserService userService;
 
     @Override
     public List<Message> getMessageList(Map<String, Object> map) {
@@ -35,11 +40,18 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void addMessage(String intro, String content) {
+    public void addMessage(MessageData messageData) {
         try {
-            messageDao.addMessage(intro, content);
+            Message message;
+            User user = userService.getUserByName(messageData.getUserName());
+            if (messageData.isAnonymity()) {
+                message = new Message(messageData.getIntro(), messageData.getContent(), user, null, messageData.getDate());
+            } else {
+                message = new Message(messageData.getIntro(), messageData.getContent(), user, user.getEmail(), messageData.getDate());
+            }
+            messageDao.addMessage(message);
             synchronized (SearchServiceImpl.newMessageList) {
-                SearchServiceImpl.newMessageList.add(new Message(intro, content));
+                SearchServiceImpl.newMessageList.add(message);
                 SearchServiceImpl.newMessageList.notify();
             }
         } catch (Exception e) {
@@ -66,6 +78,22 @@ public class MessageServiceImpl implements MessageService {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @Override
+    public Message getMessageById(int messageId) {
+        try {
+            List<Message> list = getAllMessageList();
+            for (Message message : list) {
+                if (messageId == message.getId()) {
+                    return message;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
     }
 
 }

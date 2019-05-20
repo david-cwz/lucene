@@ -2,7 +2,7 @@ package graduation.cwz.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "searchResult")
+@Table(name = "onlineSearchResult")
 public class OnlineSearchResult {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
