@@ -19,7 +19,7 @@
 <body style="margin:1px;">
 <table id="dg" title="“${keyWord}”的网页搜索结果" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/message/searchOnline.do?keyWord=${keyWord}" fit="true"
+       url="${pageContext.request.contextPath}/search/searchOnline.do?keyWord=${keyWord}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>

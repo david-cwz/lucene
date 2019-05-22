@@ -93,13 +93,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void modifyEmail(String userName, String email) {
+    public void modifyUserInfo(String userName, String email, String currentUser) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createQuery("update User u set u.email=:email " +
-                    "where u.userName=:userName");
-            query.setParameter("email", email);
+            Query query = session.createQuery("update User u set u.userName=:userName,u.email=:email " +
+                    "where u.userName=:currentUser");
             query.setParameter("userName", userName);
+            query.setParameter("email", email);
+            query.setParameter("currentUser", currentUser);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

@@ -2,7 +2,6 @@ package graduation.cwz.controller;
 
 import graduation.cwz.entity.SearchHistory;
 import graduation.cwz.model.PageBean;
-import graduation.cwz.model.RecordData;
 import graduation.cwz.model.SearchResultData;
 import graduation.cwz.service.MessageService;
 import graduation.cwz.service.SearchService;
@@ -23,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/record")
+@RequestMapping("/search")
 public class SearchController {
     @Autowired
     private SearchService searchService;
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping("/list")
+    @RequestMapping("/recordList")
     public String getRecordList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows,
                                 @RequestParam(value = "userName") String userName, HttpServletResponse response) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
@@ -49,27 +48,9 @@ public class SearchController {
     }
 
     /**
-     * 添加记录
-     */
-    @RequestMapping("/add")
-    public String addRecord(RecordData recordData, HttpServletResponse response) throws Exception {
-        JSONObject result = new JSONObject();
-        try {
-            recordData.setDate(DateUtil.getCurrentDateStr());
-            searchService.addRecord(recordData);
-            result.put("success", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("success", false);
-        }
-        ResponseUtil.write(response, result);
-        return null;
-    }
-
-    /**
      * 删除记录
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/deleteRecord")
     public String delete(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
@@ -121,6 +102,9 @@ public class SearchController {
         return null;
     }
 
+    /**
+     * 建立本系统索引
+     */
     @RequestMapping("/index")
     public String index(HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
@@ -135,11 +119,20 @@ public class SearchController {
         return null;
     }
 
-    @RequestMapping("/indexOnline")
-    public String indexOnline(String url, HttpServletResponse response) throws Exception {
+    /**
+     * 在本系统搜索
+     */
+    @RequestMapping("/search")
+    public String search(@RequestParam(value = "keyword") String keyWord, @RequestParam(value = "userName") String userName,
+                         @RequestParam(value = "searchTarget") String searchTarget, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            searchService.createOnlineIndex(url, Const.ONLINE_INDEX_PATH);
+            int recordId = searchService.addRecord(keyWord, userName, DateUtil.getCurrentDateStr(), searchTarget);
+            List<SearchResultData> resultList = searchService.search(keyWord, recordId, Const.INDEX_PATH);
+            int total = resultList.size();
+            JSONArray jsonArray = JSONArray.fromObject(resultList);
+            result.put("rows", jsonArray);
+            result.put("total", total);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,26 +142,25 @@ public class SearchController {
         return null;
     }
 
-    @RequestMapping("/search")
-    public String search(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
-        List<SearchResultData> resultList = searchService.search(keyWord, Const.INDEX_PATH);
-        int total = resultList.size();
-        JSONObject result = new JSONObject();
-        JSONArray jsonArray = JSONArray.fromObject(resultList);
-        result.put("rows", jsonArray);
-        result.put("total", total);
-        ResponseUtil.write(response, result);
-        return null;
-    }
-
+    /**
+     * 在网页搜索
+     */
     @RequestMapping("/searchOnline")
-    public String searchOnline(@RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
-        List<SearchResultData> resultList = searchService.searchOnline(keyWord, Const.ONLINE_INDEX_PATH);
-        int total = resultList.size();
+    public String searchOnline(String url, @RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
-        JSONArray jsonArray = JSONArray.fromObject(resultList);
-        result.put("rows", jsonArray);
-        result.put("total", total);
+        try {
+            searchService.createOnlineIndex(url, Const.ONLINE_INDEX_PATH); //建立索引
+
+            List<SearchResultData> resultList = searchService.searchOnline(keyWord, Const.ONLINE_INDEX_PATH);
+            int total = resultList.size();
+            JSONArray jsonArray = JSONArray.fromObject(resultList);
+            result.put("rows", jsonArray);
+            result.put("total", total);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
         ResponseUtil.write(response, result);
         return null;
     }

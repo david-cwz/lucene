@@ -11,9 +11,11 @@ public interface UserService {
     void register(UserData userData);
     void delUser(String deleteName);
     void modifyPassword(String userName, String password);
-    void modifyEmail(String userName, String email);
+    void modifyUserInfo(String userName, String email, String currentUser);
     String login(UserData userData);
     User getUserByName(String userName);
+    UserData getUserDataByName(String userName);
+    List<UserData> getUserDataList(List<User> userList);
     int countUser();
     void changeToSystem(String userName); //将用户权限升为管理员
 }

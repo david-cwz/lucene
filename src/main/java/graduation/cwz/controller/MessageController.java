@@ -45,7 +45,7 @@ public class MessageController {
     public String addMessage(MessageData messageData, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            messageService.addMessage(messageData.getIntro(), messageData.getContent());
+            messageService.addMessage(messageData);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

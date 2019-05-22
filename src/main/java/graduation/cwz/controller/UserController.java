@@ -33,15 +33,14 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (!"".equals(message)) {
+        if ("user".equals(message) || "system".equals(message)) {
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", userService.getUserDataByName(userData.getUserName()));
+            return "redirect:/main.jsp";
+        } else {
             request.setAttribute("errorMsg", "请认真核对账号、密码！ message：" + message);
             return "login";
-        } else {
-            HttpSession session = request.getSession();
-            session.setAttribute("currentUser", userData);
-            return "redirect:/main.jsp";
         }
-
     }
 
     /**
@@ -60,6 +59,7 @@ public class UserController {
     public String register(UserData userData, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
+            userData.setRole("user");
             userService.register(userData);
             result.put("success", true);
         } catch (Exception e) {
@@ -71,11 +71,13 @@ public class UserController {
     }
 
     @RequestMapping("/modifyPassword")
-    public String modifyPassword(UserData userData, HttpServletResponse response)throws Exception{
+    public String modifyPassword(UserData userData, HttpServletResponse response, HttpServletRequest request)throws Exception{
         JSONObject result = new JSONObject();
         try {
             userService.modifyPassword(userData.getUserName(), userData.getPassword());
             result.put("success", true);
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", userService.getUserDataByName(userData.getUserName()));
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -84,12 +86,15 @@ public class UserController {
         return null;
     }
 
-    @RequestMapping("/modifyEmail")
-    public String modifyEmail(UserData userData, HttpServletResponse response)throws Exception{
+    @RequestMapping("/modifyUserInfo")
+    public String modifyUserInfo(UserData userData, @RequestParam(value = "currentUser") String currentUser,
+                              HttpServletResponse response, HttpServletRequest request)throws Exception{
         JSONObject result = new JSONObject();
         try {
-            userService.modifyEmail(userData.getUserName(), userData.getEmail());
+            userService.modifyUserInfo(userData.getUserName(), userData.getEmail(), currentUser);
             result.put("success", true);
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", userService.getUserDataByName(userData.getUserName()));
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -105,9 +110,10 @@ public class UserController {
         map.put("start", pageBean.getStart());
         map.put("size", pageBean.getPageSize());
         List<User> userList = userService.getUserList(map);
+        List<UserData> userDataList = userService.getUserDataList(userList);
         int total = userService.countUser();
         JSONObject result = new JSONObject();
-        JSONArray jsonArray = JSONArray.fromObject(userList);
+        JSONArray jsonArray = JSONArray.fromObject(userDataList);
         result.put("rows", jsonArray);
         result.put("total", total);
         ResponseUtil.write(response, result);
@@ -124,6 +130,26 @@ public class UserController {
             String[] nameListStr = nameList.split(",");
             for (int i = 0; i < nameListStr.length; i++) {
                 userService.delUser(nameListStr[i]);
+            }
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    /**
+     * 升级用户权限
+     */
+    @RequestMapping("/changeToSystem")
+    public String changeToSystem(@RequestParam(value = "nameList") String nameList, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            String[] nameListStr = nameList.split(",");
+            for (int i = 0; i < nameListStr.length; i++) {
+                userService.changeToSystem(nameListStr[i]);
             }
             result.put("success", true);
         } catch (Exception e) {

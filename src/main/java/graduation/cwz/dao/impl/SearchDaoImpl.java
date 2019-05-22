@@ -81,12 +81,13 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     @Override
-    public void addRecord(String record, User user, String date, String searchTarget) {
+    public int addRecord(String record, User user, String date, String searchTarget) {
         try (Session session = sessionFactory.openSession()) {
             SearchHistory searchHistory = new SearchHistory(record, user, date, searchTarget);
             Transaction transaction = session.beginTransaction();
             session.save(searchHistory);
             transaction.commit();
+            return searchHistory.getId();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

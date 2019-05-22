@@ -2,7 +2,6 @@ package graduation.cwz.service;
 
 import graduation.cwz.entity.*;
 import graduation.cwz.model.OnlineSearchResultData;
-import graduation.cwz.model.RecordData;
 import graduation.cwz.model.SearchResultData;
 import graduation.cwz.model.UrlData;
 
@@ -13,7 +12,7 @@ public interface SearchService {
     List<SearchHistory> getRecordList(Map<String, Object> map);
     List<SearchHistory> getAllRecordList();
     List<SearchHistory> getAllRecordListByName(String userName);
-    void addRecord(RecordData recordData);
+    int addRecord(String keyWord, String userName, String date, String searchTarget);
     void delRecord(int deleteId);
     void shiftPreEmbeddedStatus(int id);
     int countRecordByName(String userName);
@@ -21,7 +20,7 @@ public interface SearchService {
 
     void createIndex(List<Message> messageList, String indexPath);
     void createOnlineIndex(String url, String indexPath);
-    List<SearchResultData> search(String keyWord, String indexPath);
+    List<SearchResultData> search(String keyWord, int recordId, String indexPath);
     List<SearchResultData> searchOnline(String keyWord, String indexPath);
 
     List<SearchResult> getSearchResultList(Map<String, Object> map);

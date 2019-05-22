@@ -3,7 +3,6 @@ package graduation.cwz.service.impl;
 import graduation.cwz.dao.SearchDao;
 import graduation.cwz.entity.*;
 import graduation.cwz.model.OnlineSearchResultData;
-import graduation.cwz.model.RecordData;
 import graduation.cwz.model.SearchResultData;
 import graduation.cwz.model.UrlData;
 import graduation.cwz.service.MessageService;
@@ -61,7 +60,7 @@ public class SearchServiceImpl implements SearchService {
                         createIndex(newMessageList, Const.INDEX_PATH2); //创建索引
                         List<SearchHistory> list = searchDao.getPreEmbeddedRecords();
                         for (SearchHistory record : list) {
-                            List<SearchResultData> resultList = search(record.getRecord(), Const.INDEX_PATH2); //搜索
+                            List<SearchResultData> resultList = search(record.getRecord(), -1, Const.INDEX_PATH2); //搜索
                             if (resultList != null && resultList.size() > 0) {
                                 searchDao.updateHaveNewResultStatus(record.getId(), "have new result!!!");
                                 EmailUtil.sendEmail(record.getUser().getEmail(), record.getUser().getUserName(), record.getRecord());
@@ -108,10 +107,10 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void addRecord(RecordData recordData) {
+    public int addRecord(String keyWord, String userName, String date, String searchTarget) {
         try {
-            User user = userService.getUserByName(recordData.getUserName());
-            searchDao.addRecord(recordData.getRecord(), user, recordData.getDate(), recordData.getSearchTarget());
+            User user = userService.getUserByName(userName);
+            return searchDao.addRecord(keyWord, user, date, searchTarget);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -182,8 +181,7 @@ public class SearchServiceImpl implements SearchService {
     public void createIndex(List<Message> messageList, String indexPath) {
 
         IndexWriter indexWriter = null;
-        try
-        {
+        try {
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             Analyzer analyzer = new SmartChineseAnalyzer(true);
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
@@ -212,8 +210,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public void createOnlineIndex(String url, String indexPath) {
         IndexWriter indexWriter = null;
-        try
-        {
+        try {
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             Analyzer analyzer = new SmartChineseAnalyzer(true);
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
@@ -242,11 +239,10 @@ public class SearchServiceImpl implements SearchService {
      * 搜索
      */
     @Override
-    public List<SearchResultData> search(String keyWord, String indexPath) {
+    public List<SearchResultData> search(String keyWord, int recordId, String indexPath) {
         List<SearchResultData> resultList = new ArrayList<>();
         DirectoryReader directoryReader = null;
-        try
-        {
+        try {
             // 1、创建Directory
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             // 2、创建IndexReader
@@ -287,9 +283,12 @@ public class SearchServiceImpl implements SearchService {
                 String _content = highlighter.getBestFragment(analyzer, "content", content);
                 SearchResultData result;
                 if (_intro == null || "".equals(_intro)) {
-                    result = new SearchResultData(Integer.valueOf(messageId), intro, _content);
+                    result = new SearchResultData(intro, _content, Integer.valueOf(messageId), recordId);
                 } else {
-                    result = new SearchResultData(Integer.valueOf(messageId), _intro, _content);
+                    result = new SearchResultData(_intro, _content, Integer.valueOf(messageId), recordId);
+                }
+                if (recordId != -1) {
+                    addSearchResult(result);
                 }
                 resultList.add(result);
             }
@@ -309,8 +308,7 @@ public class SearchServiceImpl implements SearchService {
     public List<SearchResultData> searchOnline(String keyWord, String indexPath) {
         DirectoryReader directoryReader = null;
         List<SearchResultData> results = new ArrayList<>();
-        try
-        {
+        try {
             // 1、创建Directory
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
             // 2、创建IndexReader

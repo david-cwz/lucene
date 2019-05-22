@@ -11,6 +11,6 @@ public interface UserDao {
     void addUser(String userName, String password, String email, String role);
     void delUser(String deleteName);
     void modifyPassword(String userName, String password);
-    void modifyEmail(String userName, String email);
+    void modifyUserInfo(String userName, String email, String currentUser);
     void changeToSystem(String userName); //将用户权限升为管理员
 }

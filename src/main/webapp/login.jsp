@@ -218,14 +218,14 @@
             </tr>
             <tr>
                 <td>密码：</td>
-                <td><input type="text" id="registerPassword" name="password"
+                <td><input type="password" id="registerPassword" name="password"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>
             </tr>
             <tr>
                 <td>确认密码：</td>
-                <td><input type="text" id="registerPassword2"
+                <td><input type="password" id="registerPassword2"
                            class="easyui-validatebox" required="true"/>&nbsp;<font
                         color="red">*</font>
                 </td>

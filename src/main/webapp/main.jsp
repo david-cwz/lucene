@@ -52,12 +52,23 @@
             $("#dlg").dialog("open").dialog("setTitle", "修改密码");
             url = "${pageContext.request.contextPath}/user/modifyPassword.do?";
         }
+        function openUserInfoModifyDialog() {
+            $("#dlg2").dialog("open").dialog("setTitle", "修改用户信息");
+            $("#userName2").val("${currentUser.userName}");
+            $("#email").val("${currentUser.email}");
+            url = "${pageContext.request.contextPath}/user/modifyUserInfo.do?currentUser=${currentUser.userName}";
+        }
 
         function closePasswordModifyDialog() {
             $("#dlg").dialog("close");
             $("#oldPassword").val("");
             $("#newPassword").val("");
             $("#newPassword2").val("");
+        }
+        function closeUserInfoModifyDialog() {
+            $("#dlg2").dialog("close");
+            $("#userName2").val("");
+            $("#email").val("");
         }
 
         function modifyPassword() {
@@ -92,6 +103,30 @@
                 }
             });
         }
+        function modifyUserInfo() {
+            $("#fm2").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    var userName = $("#userName2").val();
+                    var email = $("#email").val();
+                    if (!$(this).form("validate")) {
+                        return false;
+                    }
+                    return true;
+                },
+                success: function (result) {
+                    var result = eval('(' + result + ')');
+                    if (result.success) {
+                        $.messager.alert("系统提示", "用户信息修改成功！");
+                        closeUserInfoModifyDialog();
+                        window.location.reload();
+                    } else {
+                        $.messager.alert("系统提示", "用户信息修改失败");
+                        return;
+                    }
+                }
+            });
+        }
 
         function logout() {
             $.messager
@@ -106,6 +141,9 @@
         }
 
         window.onload=function(){
+            if ("管理员" !== "${currentUser.role}") {
+                $(".system").hide();
+            }
             new Vue({
                 el:'#box',
                 data:{
@@ -117,14 +155,7 @@
                 },
                 methods:{
                     search:function(){
-                        $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + this.t1, {
-                        }, function (result) {
-                        }, "json");
-
-                        $.post("${pageContext.request.contextPath}/record/add.do", {
-                            record:this.t1,
-                            userName:"${currentUser.userName}",
-                            searchTarget:"本系统",
+                        $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + this.t1, {
                         }, function (result) {
                         }, "json");
 
@@ -132,19 +163,7 @@
                         this.t1='';
                     },
                     searchOnline:function(){
-                        $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + this.t1, {
-                        }, function (result) {
-                        }, "json");
-
-                        $.post("${pageContext.request.contextPath}/record/add.do", {
-                            record:this.t1,
-                            userName:"${currentUser.userName}",
-                            searchTarget:this.t2
-                        }, function (result) {
-                        }, "json");
-
-                        $.post("${pageContext.request.contextPath}/message/indexOnline.do", {
-                            url:this.t2
+                        $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + this.t1, {
                         }, function (result) {
                         }, "json");
 
@@ -160,7 +179,7 @@
             elm.onfocus=null;
         }
     </script>
-    <jsp:include page="login_chk.jsp"></jsp:include>
+    <jsp:include page="login_chk.jsp"/>
 <body class="easyui-layout">
 <div region="north" style="height: 78px;background-color: #ffff">
     <table width="100%">
@@ -168,7 +187,7 @@
             <td width="50%"></td>
             <td valign="bottom"
                 style="font-size: 20px;color:#8B8B8B;font-family: '楷体';"
-                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser.userName}</font>
+                align="right" width="50%"><font size="3">&nbsp;&nbsp;<strong>当前用户：</strong>${currentUser.userName}(${currentUser.role})</font>
             </td>
         </tr>
     </table>
@@ -178,52 +197,42 @@
         <div title="搜索首页" data-options="iconCls:'icon-home'">
 
             <section>
-                <img src="views/img/title.PNG" alt="未加载成功">
-                <div id="box" >
-                    <sapn class="center">
-                        <span>请输入搜索内容：</span>
-                        <span>
-                             <input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">
-                             <ul id="boxUl" v-if="isShow">
-                                 <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
-                                     <!--{{value}}-->
-                                 </li>
-                             </ul>
-                         </span>
-                    </sapn>
-                    <br>
-                    <br>
-                    <sapn class="center">
-                        <span>请输入搜索网址：</span>
-                        <span >
-                             <input id="input2" type="text" v-model="t2" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">
-                             <ul id="boxUl2" v-if="isShow">
-                                 <li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >
-                                     <!--{{value}}-->
-                                 </li>
-                             </ul>
-                         </span>
-                    </sapn>
-                    <br>
-                    <br>
-                    <span class="center">
-                            <input type="button" value="在系统中搜索" @click="search()">
-                        </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="center">
-                            <input type="button" value="在网页中搜索" @click="searchOnline()">
-                        </span>
-                </div>
+                <img src="views/img/title.JPG" alt="未加载成功">
+                <%--<div id="box" >--%>
+                    <%--<sapn class="center">--%>
+                        <%--<span>请输入搜索内容：</span>--%>
+                        <%--<span>--%>
+                             <%--<input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">--%>
+                             <%--<ul id="boxUl" v-if="isShow">--%>
+                                 <%--<li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >--%>
+                                     <%--<!--{{value}}-->--%>
+                                 <%--</li>--%>
+                             <%--</ul>--%>
+                         <%--</span>--%>
+                    <%--</sapn>--%>
+                    <%--<br>--%>
+                    <%--<br>--%>
+                    <%--<sapn class="center">--%>
+                        <%--<span>请输入搜索网址：</span>--%>
+                        <%--<span >--%>
+                             <%--<input id="input2" type="text" v-model="t2" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">--%>
+                             <%--<ul id="boxUl2" v-if="isShow">--%>
+                                 <%--<li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >--%>
+                                     <%--<!--{{value}}-->--%>
+                                 <%--</li>--%>
+                             <%--</ul>--%>
+                         <%--</span>--%>
+                    <%--</sapn>--%>
+                    <%--<br>--%>
+                    <%--<br>--%>
+                    <%--<span class="center">--%>
+                            <%--<input type="button" value="在系统中搜索" @click="search()">--%>
+                        <%--</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--%>
+                    <%--<span class="center">--%>
+                            <%--<input type="button" value="在网页中搜索" @click="searchOnline()">--%>
+                        <%--</span>--%>
+                <%--</div>--%>
             </section>
-
-            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
-                <p>产品功能如下</p>
-                <p>·用户管理：用户注册、用户登陆、数据库存储用户信息</p>
-                <p>·信息管理：提交信息、存储信息、搜索信息、显示信息</p>
-                <p>·基于Lucene的检索引擎</p>
-                <p>·提交搜索信息，在网站中检索匹配的信息并展示</p>
-                <p>·在未来有人提交了匹配信息时，可以收到邮件反馈</p>
-            </div>
-
         </div>
     </div>
 </div>
@@ -233,36 +242,54 @@
 
         <div title="搜索管理" data-options="iconCls:'icon-shujias'"
              style="padding:10px">
-            <a
-                    href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
-                    class="easyui-linkbutton"
-                    data-options="plain:true,iconCls:'icon-shujia'"
-                    style="width: 150px;"> 我的搜索记录</a>
+            <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-shujia'"
+               style="width: 150px;"> 本系统搜索</a>
+            <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-shujia'"
+               style="width: 150px;"> 网页搜索</a>
+            <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-shujia'"
+               style="width: 150px;"> 我的搜索记录</a>
         </div>
         <div title="信息管理" data-options="iconCls:'icon-shuji'"
              style="padding:10px">
-            <a
-                    href="javascript:openTab(' 信息管理','messageManage.jsp','icon-shuben')"
-                    class="easyui-linkbutton"
-                    data-options="plain:true,iconCls:'icon-shuben'"
-                    style="width: 150px;">信息管理</a>
+            <a href="javascript:openTab(' 我发布的信息','messageManage.jsp','icon-shuben')"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-shuben'"
+               style="width: 150px;"
+               >我发布的信息</a>
+            <a href="javascript:openTab(' 所有信息','messageManage.jsp','icon-shuben')"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-shuben'"
+               style="width: 150px;">所有信息</a>
         </div>
-        <div title="系统管理" data-options="iconCls:'icon-item'"
+        <div title="用户管理" data-options="iconCls:'icon-item'"
              style="padding:10px;border:none;">
             <a href="javascript:openTab('用户列表','userManage.jsp','icon-lxr')"
-               class="easyui-linkbutton"
+               class="easyui-linkbutton system"
                data-options="plain:true,iconCls:'icon-lxr'" style="width: 150px;">
-                用户列表</a> <a href="javascript:openPasswordModifyDialog()"
-                            class="easyui-linkbutton"
-                            data-options="plain:true,iconCls:'icon-modifyPassword'"
-                            style="width: 150px;"> 修改当前用户密码</a> <a href="javascript:logout()"
-                                                                   class="easyui-linkbutton"
-                                                                   data-options="plain:true,iconCls:'icon-exit'"
-                                                                   style="width: 150px;">
-            安全退出</a>
+                用户列表</a>
+            <a href="javascript:openUserInfoModifyDialog()"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-modifyPassword'"
+               style="width: 150px;"> 修改我的信息</a>
+            <a href="javascript:openPasswordModifyDialog()"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-modifyPassword'"
+               style="width: 150px;"> 修改密码</a>
+            <a href="javascript:logout()"
+               class="easyui-linkbutton"
+               data-options="plain:true,iconCls:'icon-exit'"
+               style="width: 150px;">安全退出</a>
         </div>
     </div>
 </div>
+
+<%--修改密码--%>
 <div id="dlg" class="easyui-dialog"
      style="width: 400px;height:250px;padding: 10px 20px" closed="true"
      buttons="#dlg-buttons">
@@ -296,11 +323,41 @@
         </table>
     </form>
 </div>
-
 <div id="dlg-buttons">
     <a href="javascript:modifyPassword()" class="easyui-linkbutton"
        iconCls="icon-ok">保存</a><a
         href="javascript:closePasswordModifyDialog()"
+        class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<%--修改用户信息--%>
+<div id="dlg2" class="easyui-dialog"
+     style="width: 400px;height:250px;padding: 10px 20px" closed="true"
+     buttons="#dlg2-buttons">
+    <form id="fm2" method="post">
+        <table cellspacing="8px">
+            <tr>
+                <td>用户名：</td>
+                <td><input type="text" id="userName2" name="userName"
+                           value="${currentUser.userName}"
+                           style="width: 200px"/>
+                </td>
+            </tr>
+            <tr>
+                <td>邮箱：</td>
+                <td><input type="text" id="email" name="email"
+                           class="easyui-validatebox"
+                           value="${currentUser.email}"
+                           style="width: 200px"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="dlg2-buttons">
+    <a href="javascript:modifyUserInfo()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a><a
+        href="javascript:closeUserInfoModifyDialog()"
         class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>

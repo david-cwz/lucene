@@ -32,7 +32,7 @@
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
                 + selectedRows.length + "</font>条数据吗？", function (r) {
                 if (r) {
-                    $.post("${pageContext.request.contextPath}/record/delete.do", {
+                    $.post("${pageContext.request.contextPath}/search/deleteRecord.do", {
                         idList: idList
                     }, function (result) {
                         if (result.success) {
@@ -54,11 +54,11 @@
                 return;
             }
             var keyWord = selectedRows[0].record;
-            $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + keyWord, {
+            $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + keyWord, {
             }, function (result) {
             }, "json");
 
-            $.post("${pageContext.request.contextPath}/record/updateStatus.do?id=" + selectedRows[0].id + "&haveNewResult=no%20new%20results", {
+            $.post("${pageContext.request.contextPath}/search/updateStatus.do?id=" + selectedRows[0].id + "&haveNewResult=no%20new%20results", {
             }, function (result) {
             }, "json");
 
@@ -67,7 +67,7 @@
             if (selectedRows[0].searchTarget === "本系统") {
                 window.parent.openTab(' “' + keyWord + '”的系统搜索结果','searchResult.jsp','icon-shujia');
             } else {
-                $.post("${pageContext.request.contextPath}/message/indexOnline.do", {
+                $.post("${pageContext.request.contextPath}/search/indexOnline.do", {
                     url:selectedRows[0].searchTarget
                 }, function (result) {
                 }, "json");
@@ -84,13 +84,13 @@
             var id = selectedRows[0].id;
             $.messager.confirm("系统提示", "您确认要转换这条记录的预埋单状态吗？", function (r) {
                 if (r) {
-                    $.post("${pageContext.request.contextPath}/record/shiftStatus.do", {
+                    $.post("${pageContext.request.contextPath}/search/shiftStatus.do", {
                         id: id
                     }, function (result) {
                         if (result.success) {
                             $.messager.alert("系统提示", "转换成功！");
 
-                            $.post("${pageContext.request.contextPath}/message/setKeyWord.do?keyWord=" + selectedRows[0].record, {
+                            $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + selectedRows[0].record, {
                             }, function (result) {
                             }, "json");
                         } else {
@@ -137,7 +137,7 @@
 <body style="margin:1px;">
 <table id="dg" title="我的搜索记录" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/record/list.do?userName=${currentUser.userName}" fit="true"
+       url="${pageContext.request.contextPath}/search/recordList.do?userName=${currentUser.userName}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>
