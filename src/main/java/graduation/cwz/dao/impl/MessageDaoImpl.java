@@ -24,7 +24,26 @@ public class MessageDaoImpl implements MessageDao {
         int start = (Integer) map.get("start");
         int size = (Integer) map.get("size");
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from Message m order by id desc");
+            Query query = session.createQuery("from Message m order by date desc");
+            query.setFirstResult(start);
+            query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public List<Message> getMessageListByUser(Map<String, Object> map, String userName) {
+        List<Message> list;
+        int start = (Integer) map.get("start");
+        int size = (Integer) map.get("size");
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from Message m " +
+                    "where m.user.userName=:userName order by date desc");
+            query.setParameter("userName", userName);
             query.setFirstResult(start);
             query.setMaxResults(size);
             list = query.list();
@@ -67,6 +86,23 @@ public class MessageDaoImpl implements MessageDao {
             Query query = session.createQuery("delete from Message m " +
                     "where m.id=:deleteId");
             query.setParameter("deleteId", deleteId);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void modifyMessage(int id, String intro, String content) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("update Message m set m.intro=:intro,m.content=:content " +
+                    "where m.id=:id");
+            query.setParameter("intro", intro);
+            query.setParameter("content", content);
+            query.setParameter("id", id);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {

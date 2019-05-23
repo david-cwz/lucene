@@ -9,6 +9,7 @@ import graduation.cwz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,16 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> getMessageList(Map<String, Object> map) {
         try {
             return messageDao.getMessageList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Message> getMessageListByUser(Map<String, Object> map, String userName) {
+        try {
+            return messageDao.getMessageListByUser(map, userName);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -94,6 +105,37 @@ public class MessageServiceImpl implements MessageService {
             throw e;
         }
         return null;
+    }
+
+    @Override
+    public List<MessageData> getMessageDataList(List<Message> messageList) {
+        List<MessageData> messageDataList = new ArrayList<>();
+        try {
+            for (Message message : messageList) {
+                MessageData messageData = new MessageData();
+                messageData.setId(message.getId());
+                messageData.setIntro(message.getIntro());
+                messageData.setContent(message.getContent());
+                messageData.setUserName(message.getUser().getUserName());
+                messageData.setEmail(message.getEmail());
+                messageData.setDate(message.getDate());
+                messageDataList.add(messageData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return messageDataList;
+    }
+
+    @Override
+    public void modifyMessage(int id, String intro, String content) {
+        try {
+            messageDao.modifyMessage(id, intro, content);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 }

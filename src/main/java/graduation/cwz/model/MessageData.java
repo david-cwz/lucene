@@ -1,12 +1,21 @@
 package graduation.cwz.model;
 
 public class MessageData {
+    private int id;
     private String intro;
     private String content;
-    private String keyWord;
     private String userName;
+    private String email;
     private String date;
-    private boolean anonymity;
+    private boolean anonymity = false;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getIntro() {
         return intro;
@@ -24,20 +33,20 @@ public class MessageData {
         this.content = content;
     }
 
-    public String getKeyWord() {
-        return keyWord;
-    }
-
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
-    }
-
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getDate() {

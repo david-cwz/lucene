@@ -262,7 +262,7 @@
                data-options="plain:true,iconCls:'icon-shuben'"
                style="width: 150px;"
                >我发布的信息</a>
-            <a href="javascript:openTab(' 所有信息','messageManage.jsp','icon-shuben')"
+            <a href="javascript:openTab(' 所有信息','allMessage.jsp','icon-shuben')"
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-shuben'"
                style="width: 150px;">所有信息</a>
