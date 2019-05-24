@@ -1,8 +1,12 @@
 package graduation.cwz.controller;
 
+import graduation.cwz.entity.OnlineSearchResult;
 import graduation.cwz.entity.SearchHistory;
+import graduation.cwz.entity.SearchResult;
+import graduation.cwz.entity.Url;
 import graduation.cwz.model.PageBean;
 import graduation.cwz.model.SearchResultData;
+import graduation.cwz.model.UrlData;
 import graduation.cwz.service.MessageService;
 import graduation.cwz.service.SearchService;
 import graduation.cwz.utils.Const;
@@ -41,6 +45,59 @@ public class SearchController {
         int total = searchService.countRecordByName(userName);
         JSONObject result = new JSONObject();
         JSONArray jsonArray = JSONArray.fromObject(messageList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/resultList")
+    public String getSearchResultList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows,
+                                @RequestParam(value = "recordId") int recordId, HttpServletResponse response) throws Exception {
+        PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
+        Map<String, Object> map = new HashMap<>();
+        map.put("start", pageBean.getStart());
+        map.put("size", pageBean.getPageSize());
+        map.put("recordId", recordId);
+        List<SearchResult> searchResultList = searchService.getSearchResultList(map);
+        int total = searchService.getSearchResultListByRecordId(recordId).size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(searchResultList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/onlineResultList")
+    public String getOnlineSearchResultList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows,
+                                @RequestParam(value = "recordId") int recordId, HttpServletResponse response) throws Exception {
+        PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
+        Map<String, Object> map = new HashMap<>();
+        map.put("start", pageBean.getStart());
+        map.put("size", pageBean.getPageSize());
+        map.put("recordId", recordId);
+        List<OnlineSearchResult> onlineSearchResultList = searchService.getOnlineSearchResultList(map);
+        int total = searchService.getOnlineSearchResultListByRecordId(recordId).size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(onlineSearchResultList);
+        result.put("rows", jsonArray);
+        result.put("total", total);
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    @RequestMapping("/urlList")
+    public String getUrlList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows,
+                                HttpServletResponse response) throws Exception {
+        PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
+        Map<String, Object> map = new HashMap<>();
+        map.put("start", pageBean.getStart());
+        map.put("size", pageBean.getPageSize());
+        List<Url> urlList = searchService.getUrlList(map);
+        int total = urlList.size();
+        JSONObject result = new JSONObject();
+        JSONArray jsonArray = JSONArray.fromObject(urlList);
         result.put("rows", jsonArray);
         result.put("total", total);
         ResponseUtil.write(response, result);
@@ -123,7 +180,7 @@ public class SearchController {
      * 在本系统搜索
      */
     @RequestMapping("/search")
-    public String search(@RequestParam(value = "keyword") String keyWord, @RequestParam(value = "userName") String userName,
+    public String search(@RequestParam(value = "keyWord") String keyWord, @RequestParam(value = "userName") String userName,
                          @RequestParam(value = "searchTarget") String searchTarget, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
@@ -156,6 +213,60 @@ public class SearchController {
             JSONArray jsonArray = JSONArray.fromObject(resultList);
             result.put("rows", jsonArray);
             result.put("total", total);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    /**
+     * 添加网站
+     */
+    @RequestMapping("/addUrl")
+    public String addUrl(UrlData urlData, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            searchService.addUrl(urlData);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    /**
+     * 修改网站
+     */
+    @RequestMapping("/modifyUrl")
+    public String modifyUrl(UrlData urlData, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            searchService.modifyUrl(urlData);
+            result.put("success", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+        }
+        ResponseUtil.write(response, result);
+        return null;
+    }
+
+    /**
+     * 删除网站
+     */
+    @RequestMapping("/delUrl")
+    public String delUrl(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
+        JSONObject result = new JSONObject();
+        try {
+            String[] idListStr = idList.split(",");
+            for (int i = 0; i < idListStr.length; i++) {
+                searchService.delUrl(Integer.parseInt(idListStr[i]));
+            }
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

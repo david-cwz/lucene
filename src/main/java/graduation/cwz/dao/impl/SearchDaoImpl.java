@@ -162,11 +162,26 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     @Override
+    public List<SearchResult> getSearchResultListByRecordId(int recordId) {
+        List<SearchResult> list;
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from SearchResult sr " +
+                    "where sr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
     public void addSearchResult(SearchHistory record, Message message, String intro, String content) {
         try (Session session = sessionFactory.openSession()) {
             SearchResult searchResult = new SearchResult(record, message, intro, content);
             Transaction transaction = session.beginTransaction();
-            session.save(searchResult);
+            session.merge(searchResult);
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -186,6 +201,21 @@ public class SearchDaoImpl implements SearchDao {
             query.setParameter("recordId", recordId);
             query.setFirstResult(start);
             query.setMaxResults(size);
+            list = query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return list;
+    }
+
+    @Override
+    public List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId) {
+        List<OnlineSearchResult> list;
+        try (Session session = sessionFactory.openSession()) {
+            Query query = session.createQuery("from OnlineSearchResult osr " +
+                    "where osr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
             list = query.list();
         } catch (Exception e) {
             e.printStackTrace();

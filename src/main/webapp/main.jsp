@@ -194,7 +194,7 @@
 </div>
 <div region="center">
     <div class="easyui-tabs" fit="true" border="false" id="tabs">
-        <div title="搜索首页" data-options="iconCls:'icon-home'">
+        <div title="首页" data-options="iconCls:'icon-home'">
 
             <section>
                 <img src="views/img/title.JPG" alt="未加载成功">
@@ -242,14 +242,10 @@
 
         <div title="搜索管理" data-options="iconCls:'icon-shujias'"
              style="padding:10px">
-            <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
+            <a href="javascript:openTab(' 搜索页面','search.jsp','icon-shujia')"
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-shujia'"
-               style="width: 150px;"> 本系统搜索</a>
-            <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
-               class="easyui-linkbutton"
-               data-options="plain:true,iconCls:'icon-shujia'"
-               style="width: 150px;"> 网页搜索</a>
+               style="width: 150px;"> 搜索页面</a>
             <a href="javascript:openTab(' 我的搜索记录','searchRecord.jsp','icon-shujia')"
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-shujia'"

@@ -19,11 +19,9 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
@@ -31,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -178,7 +177,7 @@ public class SearchServiceImpl implements SearchService {
      * 创建索引
      */
     @Override
-    public void createIndex(List<Message> messageList, String indexPath) {
+    public void createIndex(List<Message> messageList, String indexPath) throws IOException {
 
         IndexWriter indexWriter = null;
         try {
@@ -198,6 +197,7 @@ public class SearchServiceImpl implements SearchService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if(indexWriter != null) indexWriter.close();
@@ -208,7 +208,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void createOnlineIndex(String url, String indexPath) {
+    public void createOnlineIndex(String url, String indexPath) throws IOException {
         IndexWriter indexWriter = null;
         try {
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
@@ -226,6 +226,7 @@ public class SearchServiceImpl implements SearchService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if(indexWriter != null) indexWriter.close();
@@ -236,10 +237,10 @@ public class SearchServiceImpl implements SearchService {
     }
 
     /**
-     * 搜索
+     * 本系统搜索
      */
     @Override
-    public List<SearchResultData> search(String keyWord, int recordId, String indexPath) {
+    public List<SearchResultData> search(String keyWord, int recordId, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException {
         List<SearchResultData> resultList = new ArrayList<>();
         DirectoryReader directoryReader = null;
         try {
@@ -294,6 +295,7 @@ public class SearchServiceImpl implements SearchService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if(directoryReader != null) directoryReader.close();
@@ -305,7 +307,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<SearchResultData> searchOnline(String keyWord, String indexPath) {
+    public List<SearchResultData> searchOnline(String keyWord, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException {
         DirectoryReader directoryReader = null;
         List<SearchResultData> results = new ArrayList<>();
         try {
@@ -350,6 +352,7 @@ public class SearchServiceImpl implements SearchService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if(directoryReader != null) directoryReader.close();
@@ -364,6 +367,16 @@ public class SearchServiceImpl implements SearchService {
     public List<SearchResult> getSearchResultList(Map<String, Object> map) {
         try {
             return searchDao.getSearchResultList(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<SearchResult> getSearchResultListByRecordId(int recordId) {
+        try {
+            return searchDao.getSearchResultListByRecordId(recordId);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -408,6 +421,16 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId) {
+        try {
+            return searchDao.getOnlineSearchResultListByRecordId(recordId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public void addOnlineSearchResult(OnlineSearchResultData onlineSearchResultData) {
         try {
             SearchHistory record = getRecordById(onlineSearchResultData.getRecordId());
@@ -439,9 +462,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void modifyUrl(int urlId, UrlData urlData) {
+    public void modifyUrl(UrlData urlData) {
         try {
-            searchDao.modifyUrl(urlId, urlData.getName(), urlData.getUrl());
+            searchDao.modifyUrl(urlData.getId(), urlData.getName(), urlData.getUrl());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

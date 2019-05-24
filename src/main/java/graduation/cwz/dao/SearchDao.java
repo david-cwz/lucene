@@ -16,9 +16,11 @@ public interface SearchDao {
     void updateHaveNewResultStatus(int id, String haveNewResult);
 
     List<SearchResult> getSearchResultList(Map<String, Object> map);
+    List<SearchResult> getSearchResultListByRecordId(int recordId);
     void addSearchResult(SearchHistory record, Message message, String intro, String content);
 
     List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map);
+    List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId);
     void addOnlineSearchResult(SearchHistory record, String content, String url);
 
     List<Url> getUrlList(Map<String, Object> map);

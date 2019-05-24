@@ -1,14 +1,16 @@
 package graduation.cwz.model;
 
 public class UrlData {
+    private int id;
     private String name;
     private String url;
 
-    public UrlData() { }
+    public int getId() {
+        return id;
+    }
 
-    public UrlData(String name, String url) {
-        this.name = name;
-        this.url = url;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
