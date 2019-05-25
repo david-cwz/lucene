@@ -47,20 +47,24 @@
 
         }
 
-        function reSearchRecord() {
+        function getResult() {
             var selectedRows = $("#dg").datagrid('getSelections');
             if (selectedRows.length !== 1) {
-                $.messager.alert("系统提示", "请选择“1”条要重新搜索的记录！");
+                $.messager.alert("系统提示", "请选择“1”条搜索记录！");
                 return;
             }
+            var recordId = selectedRows[0].id;
             var keyWord = selectedRows[0].record;
-            $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + keyWord, {
+            var preEmbedded = selectedRows[0].preEmbedded;
+            $.post("${pageContext.request.contextPath}/search/setRecord.do?recordId=" + recordId, {
             }, function (result) {
             }, "json");
 
-            $.post("${pageContext.request.contextPath}/search/updateStatus.do?id=" + selectedRows[0].id + "&haveNewResult=no%20new%20results", {
-            }, function (result) {
-            }, "json");
+            if (preEmbedded) {
+                $.post("${pageContext.request.contextPath}/search/updateStatus.do?id=" + selectedRows[0].id + "&haveNewResult=no%20new%20results", {
+                }, function (result) {
+                }, "json");
+            }
 
             $("#dg").datagrid("reload");
 
@@ -155,8 +159,8 @@
     <div>
         <a href="javascript:openRecordShiftDialog()" class="easyui-linkbutton"
            iconCls="icon-edit" plain="true">转换预埋单状态</a>
-        <a href="javascript:reSearchRecord()" class="easyui-linkbutton"
-           iconCls="icon-edit" plain="true">重新搜索此条记录</a>
+        <a href="javascript:getResult()" class="easyui-linkbutton"
+           iconCls="icon-edit" plain="true">查看搜索结果</a>
         <a href="javascript:deleteRecord()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a>
     </div>

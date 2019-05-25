@@ -29,9 +29,11 @@ public interface SearchService {
     List<SearchResult> getSearchResultList(Map<String, Object> map);
     List<SearchResult> getSearchResultListByRecordId(int recordId);
     void addSearchResult(SearchResultData searchResultData);
+    List<SearchResultData> getResultDataList(List<SearchResult> searchResultList);
 
     List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map);
     List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId);
+    SearchHistory getRecordById(int recordId);
     void addOnlineSearchResult(OnlineSearchResultData onlineSearchResultData);
 
     List<Url> getUrlList(Map<String, Object> map);

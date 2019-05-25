@@ -190,6 +190,21 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     @Override
+    public void delSearchResultByRecordId(int recordId) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("delete from SearchResult sr " +
+                    "where sr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map) {
         List<OnlineSearchResult> list;
         int start = (Integer) map.get("start");
@@ -230,6 +245,21 @@ public class SearchDaoImpl implements SearchDao {
             OnlineSearchResult onlineSearchResult = new OnlineSearchResult(record, content, url);
             Transaction transaction = session.beginTransaction();
             session.save(onlineSearchResult);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
+    public void delOnlineSearchResultByRecordId(int recordId) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("delete from OnlineSearchResult osr " +
+                    "where osr.record.id=:recordId");
+            query.setParameter("recordId", recordId);
+            query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();

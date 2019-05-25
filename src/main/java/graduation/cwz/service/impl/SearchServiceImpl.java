@@ -119,6 +119,8 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public void delRecord(int deleteId) {
         try {
+            searchDao.delSearchResultByRecordId(deleteId);
+            searchDao.delOnlineSearchResultByRecordId(deleteId);
             searchDao.delRecord(deleteId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -383,6 +385,7 @@ public class SearchServiceImpl implements SearchService {
         }
     }
 
+    @Override
     public SearchHistory getRecordById(int recordId) {
         try {
             List<SearchHistory> list = getAllRecordList();
@@ -408,6 +411,28 @@ public class SearchServiceImpl implements SearchService {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @Override
+    public List<SearchResultData> getResultDataList(List<SearchResult> searchResultList) {
+        List<SearchResultData> resultDataList = new ArrayList<>();
+        try {
+            for (SearchResult searchResult : searchResultList) {
+                SearchResultData resultData = new SearchResultData();
+                resultData.setIntro(searchResult.getIntro());
+                resultData.setContent(searchResult.getContent());
+                resultData.setMessageId(searchResult.getMessage().getId());
+                resultData.setRecordId(searchResult.getRecord().getId());
+                resultData.setUserName(searchResult.getMessage().getUser().getUserName());
+                resultData.setEmail(searchResult.getMessage().getEmail());
+                resultData.setDate(searchResult.getMessage().getDate());
+                resultDataList.add(resultData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return resultDataList;
     }
 
     @Override

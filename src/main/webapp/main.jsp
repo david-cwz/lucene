@@ -143,6 +143,7 @@
         window.onload=function(){
             if ("管理员" !== "${currentUser.role}") {
                 $(".system").hide();
+                $(".system").disabled=true;
             }
             new Vue({
                 el:'#box',
@@ -250,6 +251,10 @@
                class="easyui-linkbutton"
                data-options="plain:true,iconCls:'icon-shujia'"
                style="width: 150px;"> 我的搜索记录</a>
+            <a href="javascript:openTab(' 网站列表管理','urlManage.jsp','icon-shujia')"
+               class="easyui-linkbutton system"
+               data-options="plain:true,iconCls:'icon-shujia'"
+               style="width: 150px;"> 网站列表管理</a>
         </div>
         <div title="信息管理" data-options="iconCls:'icon-shuji'"
              style="padding:10px">

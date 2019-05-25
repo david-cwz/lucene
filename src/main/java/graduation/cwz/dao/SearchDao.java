@@ -18,10 +18,12 @@ public interface SearchDao {
     List<SearchResult> getSearchResultList(Map<String, Object> map);
     List<SearchResult> getSearchResultListByRecordId(int recordId);
     void addSearchResult(SearchHistory record, Message message, String intro, String content);
+    void delSearchResultByRecordId(int recordId);
 
     List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map);
     List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId);
     void addOnlineSearchResult(SearchHistory record, String content, String url);
+    void delOnlineSearchResultByRecordId(int recordId);
 
     List<Url> getUrlList(Map<String, Object> map);
     void addUrl(String name, String url);

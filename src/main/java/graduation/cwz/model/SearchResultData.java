@@ -5,6 +5,9 @@ public class SearchResultData {
     private String content;
     private int messageId;
     private int recordId;
+    private String userName;
+    private String email;
+    private String date;
 
     public SearchResultData() {}
 
@@ -45,5 +48,29 @@ public class SearchResultData {
 
     public void setRecordId(int recordId) {
         this.recordId = recordId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

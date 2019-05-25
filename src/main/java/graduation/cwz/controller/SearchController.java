@@ -60,9 +60,10 @@ public class SearchController {
         map.put("size", pageBean.getPageSize());
         map.put("recordId", recordId);
         List<SearchResult> searchResultList = searchService.getSearchResultList(map);
+        List<SearchResultData> resultDataList = searchService.getResultDataList(searchResultList);
         int total = searchService.getSearchResultListByRecordId(recordId).size();
         JSONObject result = new JSONObject();
-        JSONArray jsonArray = JSONArray.fromObject(searchResultList);
+        JSONArray jsonArray = JSONArray.fromObject(resultDataList);
         result.put("rows", jsonArray);
         result.put("total", total);
         ResponseUtil.write(response, result);
@@ -181,10 +182,15 @@ public class SearchController {
      */
     @RequestMapping("/search")
     public String search(@RequestParam(value = "keyWord") String keyWord, @RequestParam(value = "userName") String userName,
-                         @RequestParam(value = "searchTarget") String searchTarget, HttpServletResponse response) throws Exception {
+                         @RequestParam(value = "searchTarget") String searchTarget, HttpServletRequest request, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
             int recordId = searchService.addRecord(keyWord, userName, DateUtil.getCurrentDateStr(), searchTarget);
+
+            SearchHistory record = searchService.getRecordById(recordId);
+            HttpSession session = request.getSession();
+            session.setAttribute("record", record);
+
             List<SearchResultData> resultList = searchService.search(keyWord, recordId, Const.INDEX_PATH);
             int total = resultList.size();
             JSONArray jsonArray = JSONArray.fromObject(resultList);
@@ -259,8 +265,8 @@ public class SearchController {
     /**
      * 删除网站
      */
-    @RequestMapping("/delUrl")
-    public String delUrl(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
+    @RequestMapping("/deleteUrl")
+    public String deleteUrl(@RequestParam(value = "idList") String idList, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
             String[] idListStr = idList.split(",");
@@ -276,10 +282,11 @@ public class SearchController {
         return null;
     }
 
-    @RequestMapping("/setKeyWord")
-    public String setKeyWord(@RequestParam(value = "keyWord") String keyWord, HttpServletRequest request) throws Exception {
+    @RequestMapping("/setRecord")
+    public String setRecordId(@RequestParam(value = "recordId") int recordId, HttpServletRequest request) throws Exception {
+        SearchHistory record = searchService.getRecordById(recordId);
         HttpSession session = request.getSession();
-        session.setAttribute("keyWord", keyWord);
+        session.setAttribute("record", record);
         return null;
     }
 

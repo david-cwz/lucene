@@ -30,7 +30,7 @@
             }
             var idList = strIdList.join(",");
             $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
-                    + selectedRows.length + "</font>条数据吗？", function (r) {
+                    + selectedRows.length + "</font>条信息吗？", function (r) {
                 if (r) {
                     $.post("${pageContext.request.contextPath}/message/delete.do", {
                         idList: idList

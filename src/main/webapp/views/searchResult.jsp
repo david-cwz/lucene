@@ -17,15 +17,18 @@
             src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 </head>
 <body style="margin:1px;">
-<table id="dg" title="“${keyWord}”的系统搜索结果" class="easyui-datagrid" fitColumns="true"
+<table id="dg" title="“${record.record}”的系统搜索结果" class="easyui-datagrid" fitColumns="true"
        pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/search/search.do?keyWord=${keyWord}&userName=${currentUser.userName}&searchTarget=本系统" fit="true"
+       url="${pageContext.request.contextPath}/search/resultList.do?recordId=${record.id}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>
-        <th field="id" width="50" align="center">结果所在编号</th>
+        <th field="messageId" width="50" align="center">结果所在编号</th>
         <th field="intro" width="100" align="center">简介</th>
         <th field="content" width="150" align="center">内容匹配</th>
+        <th field="userName" width="50" align="center">发布者</th>
+        <th field="email" width="100" align="center">发布者联系方式</th>
+        <th field="date" width="50" align="center">发布日期</th>
     </tr>
     </thead>
 </table>
