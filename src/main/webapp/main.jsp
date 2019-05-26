@@ -145,34 +145,6 @@
                 $(".system").hide();
                 $(".system").disabled=true;
             }
-            new Vue({
-                el:'#box',
-                data:{
-                    myData:[],
-                    t1:'',
-                    t2:'',
-                    now:-1,
-                    isShow:true,
-                },
-                methods:{
-                    search:function(){
-                        $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + this.t1, {
-                        }, function (result) {
-                        }, "json");
-
-                        openTab(' “' + this.t1 + '”的系统搜索结果','searchResult.jsp','icon-shujia');
-                        this.t1='';
-                    },
-                    searchOnline:function(){
-                        $.post("${pageContext.request.contextPath}/search/setKeyWord.do?keyWord=" + this.t1, {
-                        }, function (result) {
-                        }, "json");
-
-                        openTab(' “' + this.t1 + '”的网页搜索结果','searchOnlineResult.jsp','icon-shujia');
-                        this.t1='';
-                    },
-                }
-            });
         }
 
         function clearText(elm){
@@ -196,43 +168,8 @@
 <div region="center">
     <div class="easyui-tabs" fit="true" border="false" id="tabs">
         <div title="首页" data-options="iconCls:'icon-home'">
-
             <section>
                 <img src="views/img/title.JPG" alt="未加载成功">
-                <%--<div id="box" >--%>
-                    <%--<sapn class="center">--%>
-                        <%--<span>请输入搜索内容：</span>--%>
-                        <%--<span>--%>
-                             <%--<input id="input" type="text" v-model="t1" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">--%>
-                             <%--<ul id="boxUl" v-if="isShow">--%>
-                                 <%--<li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >--%>
-                                     <%--<!--{{value}}-->--%>
-                                 <%--</li>--%>
-                             <%--</ul>--%>
-                         <%--</span>--%>
-                    <%--</sapn>--%>
-                    <%--<br>--%>
-                    <%--<br>--%>
-                    <%--<sapn class="center">--%>
-                        <%--<span>请输入搜索网址：</span>--%>
-                        <%--<span >--%>
-                             <%--<input id="input2" type="text" v-model="t2" @keydown="get($event)" @keydown.down="changeDown()" @keydown.up.prevent="changeUp()" onfocus="clearText(this)">--%>
-                             <%--<ul id="boxUl2" v-if="isShow">--%>
-                                 <%--<li v-text="value" v-for="value in myData" :class="{gray:$index==now}" @click="clk($event)" >--%>
-                                     <%--<!--{{value}}-->--%>
-                                 <%--</li>--%>
-                             <%--</ul>--%>
-                         <%--</span>--%>
-                    <%--</sapn>--%>
-                    <%--<br>--%>
-                    <%--<br>--%>
-                    <%--<span class="center">--%>
-                            <%--<input type="button" value="在系统中搜索" @click="search()">--%>
-                        <%--</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--%>
-                    <%--<span class="center">--%>
-                            <%--<input type="button" value="在网页中搜索" @click="searchOnline()">--%>
-                        <%--</span>--%>
-                <%--</div>--%>
             </section>
         </div>
     </div>

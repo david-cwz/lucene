@@ -191,11 +191,7 @@ public class SearchController {
             HttpSession session = request.getSession();
             session.setAttribute("record", record);
 
-            List<SearchResultData> resultList = searchService.search(keyWord, recordId, Const.INDEX_PATH);
-            int total = resultList.size();
-            JSONArray jsonArray = JSONArray.fromObject(resultList);
-            result.put("rows", jsonArray);
-            result.put("total", total);
+            searchService.search(keyWord, recordId, Const.INDEX_PATH);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,16 +205,18 @@ public class SearchController {
      * 在网页搜索
      */
     @RequestMapping("/searchOnline")
-    public String searchOnline(String url, @RequestParam(value = "keyWord") String keyWord, HttpServletResponse response) throws Exception {
+    public String searchOnline(String urlList, @RequestParam(value = "keyWord") String keyWord,  @RequestParam(value = "userName") String userName,
+                               HttpServletRequest request, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         try {
-            searchService.createOnlineIndex(url, Const.ONLINE_INDEX_PATH); //建立索引
+            int recordId = searchService.addRecord(keyWord, userName, DateUtil.getCurrentDateStr(), urlList);
 
-            List<SearchResultData> resultList = searchService.searchOnline(keyWord, Const.ONLINE_INDEX_PATH);
-            int total = resultList.size();
-            JSONArray jsonArray = JSONArray.fromObject(resultList);
-            result.put("rows", jsonArray);
-            result.put("total", total);
+            SearchHistory record = searchService.getRecordById(recordId);
+            HttpSession session = request.getSession();
+            session.setAttribute("record", record);
+
+            searchService.createOnlineIndex(urlList, Const.ONLINE_INDEX_PATH); //建立索引
+            searchService.searchOnline(keyWord, recordId, Const.ONLINE_INDEX_PATH);
             result.put("success", true);
         } catch (Exception e) {
             e.printStackTrace();

@@ -59,7 +59,7 @@ public class SearchServiceImpl implements SearchService {
                         createIndex(newMessageList, Const.INDEX_PATH2); //创建索引
                         List<SearchHistory> list = searchDao.getPreEmbeddedRecords();
                         for (SearchHistory record : list) {
-                            List<SearchResultData> resultList = search(record.getRecord(), -1, Const.INDEX_PATH2); //搜索
+                            List<SearchResultData> resultList = search(record.getRecord(), record.getId(), Const.INDEX_PATH2); //搜索
                             if (resultList != null && resultList.size() > 0) {
                                 searchDao.updateHaveNewResultStatus(record.getId(), "have new result!!!");
                                 EmailUtil.sendEmail(record.getUser().getEmail(), record.getUser().getUserName(), record.getRecord());
@@ -210,7 +210,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void createOnlineIndex(String url, String indexPath) throws IOException {
+    public void createOnlineIndex(String urlList, String indexPath) throws IOException {
         IndexWriter indexWriter = null;
         try {
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
@@ -218,13 +218,18 @@ public class SearchServiceImpl implements SearchService {
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
             indexWriter = new IndexWriter(directory, indexWriterConfig);
             indexWriter.deleteAll();// 清除以前的index
-            String html = Jsoup.connect(url).get().html();
-            String text = Jsoup.parse(html).text();
-            String[] contents = text.split(" ");
-            for (String content : contents) {
-                Document document = new Document();
-                document.add(new Field("content", content, TextField.TYPE_STORED));
-                indexWriter.addDocument(document);
+
+            String[] urlListStr = urlList.split(" ");
+            for (String url : urlListStr) {
+                String html = Jsoup.connect(url).get().html();
+                String text = Jsoup.parse(html).text();
+                String[] contents = text.split(" ");
+                for (String content : contents) {
+                    Document document = new Document();
+                    document.add(new Field("content", content, TextField.TYPE_STORED));
+                    document.add(new Field("url", url, TextField.TYPE_STORED));
+                    indexWriter.addDocument(document);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -285,14 +290,14 @@ public class SearchServiceImpl implements SearchService {
                 String _intro = highlighter.getBestFragment(analyzer, "intro", intro);
                 String _content = highlighter.getBestFragment(analyzer, "content", content);
                 SearchResultData result;
+                result = new SearchResultData(_intro, _content, Integer.valueOf(messageId), recordId);
                 if (_intro == null || "".equals(_intro)) {
-                    result = new SearchResultData(intro, _content, Integer.valueOf(messageId), recordId);
-                } else {
-                    result = new SearchResultData(_intro, _content, Integer.valueOf(messageId), recordId);
+                    result.setIntro(intro);
                 }
-                if (recordId != -1) {
-                    addSearchResult(result);
+                if (_content == null || "".equals(_content)) {
+                    result.setContent(content);
                 }
+                addSearchResult(result);
                 resultList.add(result);
             }
         } catch (Exception e) {
@@ -309,9 +314,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<SearchResultData> searchOnline(String keyWord, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException {
+    public List<OnlineSearchResultData> searchOnline(String keyWord, int recordId, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException {
         DirectoryReader directoryReader = null;
-        List<SearchResultData> results = new ArrayList<>();
+        List<OnlineSearchResultData> resultList = new ArrayList<>();
         try {
             // 1、创建Directory
             Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
@@ -348,9 +353,11 @@ public class SearchServiceImpl implements SearchService {
                 Document document = indexSearcher.doc(scoreDoc.doc);
                 String content = document.get("content");
                 String _content = highlighter.getBestFragment(analyzer, "content", content);
-                SearchResultData result = new SearchResultData();
-                result.setContent(_content);
-                results.add(result);
+                String url = document.get("url");
+                OnlineSearchResultData result = new OnlineSearchResultData(_content, url, recordId);
+
+                addOnlineSearchResult(result);
+                resultList.add(result);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -362,7 +369,7 @@ public class SearchServiceImpl implements SearchService {
                 e.printStackTrace();
             }
         }
-        return results;
+        return resultList;
     }
 
     @Override

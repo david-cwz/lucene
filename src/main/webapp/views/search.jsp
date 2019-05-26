@@ -37,70 +37,33 @@
             }, "json");
         }
 
-        function deleteUser() {
+        function searchOnline() {
+            var keyWord = $("#keyWord2").val();
+            var inputUrl = $("#url").val();
             var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length === 0) {
-                $.messager.alert("系统提示", "请选择要删除的用户！");
+            if (selectedRows.length === 0 && (inputUrl === "" || inputUrl === null || inputUrl === undefined)) {
+                $.messager.alert("系统提示", "请选择要搜索的网站或输入要搜索的网址！");
                 return;
             }
-            var strNameList = [];
+            var strUrlList = [];
+            if (inputUrl !== "" && inputUrl !== null && inputUrl !== undefined) {
+                strUrlList.push(inputUrl);
+            }
             for (var i = 0; i < selectedRows.length; i++) {
-                if (selectedRows[i].role === "管理员") {
-                    $.messager.alert("系统提示", "您不能删除管理员！");
-                    return;
-                }
-                strNameList.push(selectedRows[i].userName);
+                strUrlList.push(selectedRows[i].url);
             }
-            var nameList = strNameList.join(",");
-            $.messager.confirm("系统提示", "您确认要删除这<font color=red>"
-                    + selectedRows.length + "</font>条数据吗？", function (r) {
-                if (r) {
-                    $.post("${pageContext.request.contextPath}/user/delete.do", {
-                        nameList: nameList
-                    }, function (result) {
-                        if (result.success) {
-                            $.messager.alert("系统提示", "数据已成功删除！");
-                            $("#dg").datagrid("reload");
-                        } else {
-                            $.messager.alert("系统提示", "数据删除失败！");
-                        }
-                    }, "json");
+            var urlList = strUrlList.join(" ");
+
+            $.post("${pageContext.request.contextPath}/search/searchOnline.do?keyWord=" + keyWord + "&userName=${currentUser.userName}", {
+                urlList:urlList
+            }, function (result) {
+                if (result.success) {
+                    window.parent.openTab(' “' + keyWord + '”的网页搜索结果','searchOnlineResult.jsp','icon-shujia');
+                } else {
+                    $.messager.alert("系统提示", "搜索失败！");
                 }
-            });
-        }
+            }, "json");
 
-        function changeToSystem() {
-            var selectedRows = $("#dg").datagrid('getSelections');
-            if (selectedRows.length === 0) {
-                $.messager.alert("系统提示", "请选择要升级的用户！");
-                return;
-            }
-            var strNameList = [];
-            for (var i = 0; i < selectedRows.length; i++) {
-                strNameList.push(selectedRows[i].userName);
-            }
-            var nameList = strNameList.join(",");
-            $.messager.confirm("系统提示", "您确认要升级这<font color=red>"
-                + selectedRows.length + "</font>位用户吗？", function (r) {
-                if (r) {
-                    $.post("${pageContext.request.contextPath}/user/changeToSystem.do", {
-                        nameList: nameList
-                    }, function (result) {
-                        if (result.success) {
-                            $.messager.alert("系统提示", "用户升级成功！");
-                            $("#dg").datagrid("reload");
-                        } else {
-                            $.messager.alert("系统提示", "用户升级失败！");
-                        }
-                    }, "json");
-                }
-            });
-
-        }
-
-        function resetValue() {
-            $("#userName").val("");
-            $("#password").val("");
         }
 
     </script>
@@ -128,10 +91,14 @@
     </div>
     <br>
     <div>
-        &nbsp;输入网址：&nbsp;<input type="text" id="url" size="20"
-                                 onkeydown="if(event.keyCode===13) search()"/>
-        <a href="javascript:search()" class="easyui-linkbutton"
+        &nbsp;输入搜索内容：&nbsp;<input type="text" id="keyWord2" size="20"
+                                 onkeydown="if(event.keyCode===13) searchOnline()"/>
+        <a href="javascript:searchOnline()" class="easyui-linkbutton"
            iconCls="icon-search" plain="true">网页搜索（将在输入的网址和以下勾选的网站中搜索）</a>
+    </div>
+    <br>
+    <div>
+        &nbsp;输入网址：&nbsp;<input type="text" id="url" size="20""/>
     </div>
 </div>
 

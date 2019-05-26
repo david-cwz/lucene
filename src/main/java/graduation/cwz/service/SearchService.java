@@ -22,9 +22,9 @@ public interface SearchService {
     void updateHaveNewResultStatus(int id, String haveNewResult);
 
     void createIndex(List<Message> messageList, String indexPath) throws IOException;
-    void createOnlineIndex(String url, String indexPath) throws IOException;
+    void createOnlineIndex(String urlList, String indexPath) throws IOException;
     List<SearchResultData> search(String keyWord, int recordId, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException;
-    List<SearchResultData> searchOnline(String keyWord, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException;
+    List<OnlineSearchResultData> searchOnline(String keyWord, int recordId, String indexPath) throws ParseException, InvalidTokenOffsetsException, IOException;
 
     List<SearchResult> getSearchResultList(Map<String, Object> map);
     List<SearchResult> getSearchResultListByRecordId(int recordId);

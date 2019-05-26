@@ -149,7 +149,7 @@ public class SearchDaoImpl implements SearchDao {
         int recordId = (int)map.get("recordId");
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from SearchResult sr " +
-                    "where sr.record.id=:recordId");
+                    "where sr.record.id=:recordId order by sr.id desc");
             query.setParameter("recordId", recordId);
             query.setFirstResult(start);
             query.setMaxResults(size);
@@ -212,7 +212,7 @@ public class SearchDaoImpl implements SearchDao {
         int recordId = (int)map.get("recordId");
         try (Session session = sessionFactory.openSession()) {
             Query query = session.createQuery("from OnlineSearchResult osr " +
-                    "where osr.record.id=:recordId");
+                    "where osr.record.id=:recordId order by osr.id desc");
             query.setParameter("recordId", recordId);
             query.setFirstResult(start);
             query.setMaxResults(size);
