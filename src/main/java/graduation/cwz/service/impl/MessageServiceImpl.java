@@ -1,6 +1,7 @@
 package graduation.cwz.service.impl;
 
 import graduation.cwz.dao.MessageDao;
+import graduation.cwz.dao.SearchDao;
 import graduation.cwz.entity.Message;
 import graduation.cwz.entity.User;
 import graduation.cwz.model.MessageData;
@@ -19,6 +20,8 @@ public class MessageServiceImpl implements MessageService {
     MessageDao messageDao;
     @Autowired
     UserService userService;
+    @Autowired
+    SearchDao searchDao;
 
     @Override
     public List<Message> getMessageList(Map<String, Object> map) {
@@ -74,6 +77,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void delMessage(int deleteId) {
         try {
+            searchDao.delSearchResultByMessageId(deleteId);
             messageDao.delMessage(deleteId);
         } catch (Exception e) {
             e.printStackTrace();

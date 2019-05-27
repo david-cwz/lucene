@@ -19,6 +19,7 @@ public interface SearchDao {
     List<SearchResult> getSearchResultListByRecordId(int recordId);
     void addSearchResult(SearchHistory record, Message message, String intro, String content);
     void delSearchResultByRecordId(int recordId);
+    void delSearchResultByMessageId(int messageId);
 
     List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map);
     List<OnlineSearchResult> getOnlineSearchResultListByRecordId(int recordId);

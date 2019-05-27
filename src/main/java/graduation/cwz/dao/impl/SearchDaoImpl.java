@@ -205,6 +205,21 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     @Override
+    public void delSearchResultByMessageId(int messageId) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("delete from SearchResult sr " +
+                    "where sr.message.id=:messageId");
+            query.setParameter("messageId", messageId);
+            query.executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Override
     public List<OnlineSearchResult> getOnlineSearchResultList(Map<String, Object> map) {
         List<OnlineSearchResult> list;
         int start = (Integer) map.get("start");
